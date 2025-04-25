@@ -1,18 +1,29 @@
-import { Box, Button, Container, Heading, Text, VStack, FormControl, Input, InputGroup, IconButton, Fieldset, Stack, Field, NativeSelect, For } from "@chakra-ui/react";
+import { Box, Button, Container, Heading, Text, VStack, Input, InputGroup, IconButton, Fieldset, Field} from "@chakra-ui/react";
 import { Link, Eye, EyeOff  } from 'lucide-react';
 import { useColorModeValue } from "./components/ui/color-mode";
 import { useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+
+type typeLoginSchema = z.infer<typeof loginSchema>;
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8).max(30),
+})
 
 function App() {
 
+  const { register, handleSubmit, formState: { errors }, } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
+
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // This would normally validate and authenticate
-    // onLogin();
-  };
-
+  const onSubmit = (data:typeLoginSchema) => {
+    console.log(data);
+  }
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const boxShadow = useColorModeValue('lg', 'dark-lg');
@@ -49,7 +60,7 @@ function App() {
         </VStack>
         <Box
           as="form"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           bg={bgColor}
           p={8}
           borderRadius="xl"
@@ -61,17 +72,19 @@ function App() {
           <VStack wordSpacing={4} align="flex-start" w="100%">
             <Fieldset.Root size="lg" maxW="100%">
               <Fieldset.Content>
-                <Field.Root required>
+                <Field.Root invalid={!!errors.email}>
                   <Field.Label>Email</Field.Label>
                   <Input
                     type="email"
                     placeholder="your@email.com"
                     size="lg"
                     borderRadius="md"
+                    {...register("email", { required: true })}
                   />
+                  <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
                 </Field.Root>
 
-                <Field.Root required>
+                <Field.Root invalid={!!errors.password}>
                   <Field.Label>Password</Field.Label>
                   <InputGroup bgSize={"lg"}
                     endElement={
@@ -80,7 +93,6 @@ function App() {
                         h="1.75rem"
                         size="sm"
                         variant="ghost"
-                        // icon={showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -88,16 +100,13 @@ function App() {
                     }
                   >
                     <Input
-                      type={showPassword ? "text" : "password"} 
-                      // value={password}
-                      // onChange={(e) => setPassword(e.target.value)}
+                      type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       borderRadius="md"
-                      required
+                      {...register("password", { required: true })}
                     />
-                      {/* <InputRightElement>
-                      </InputRightElement> */}
                   </InputGroup>
+                  <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
                 </Field.Root>
 
               </Fieldset.Content>
