@@ -1,18 +1,48 @@
+// {
+//   "files": [],
+//   "references": [
+//     { "path": "./tsconfig.app.json" },
+//     { "path": "./tsconfig.node.json" }
+//   ],
+//   "compilerOptions": {
+//     "module": "ESNext",
+//     "moduleResolution": "Bundler",
+//     "skipLibCheck": true,
+//     "baseUrl": "./",
+//     "paths": {
+//       "@/*": ["./src/*"]
+//     },
+//     "strict": true
+//   },
+//   // "include":["."],
+// }
+
+
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
   "compilerOptions": {
+    "target": "ESNext",                        // Usa lo último de JS
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,                       // Salta chequeo de dependencias
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,                             // TypeScript estricto = menos bugs
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,                             // Vite se encarga del build
+    "jsx": "react-jsx",                         // JSX moderno
+    "types": ["vite/client"],                   // Soporte para import.meta.env
+    "incremental": true,                        // Cachea builds TS
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
-    },
-    "strict": true
+      "@/*": ["src/*"]                          // Alias @ => src/
+    }
   },
-  // "include":["."],
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
