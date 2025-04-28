@@ -5,6 +5,7 @@ import Loading from "@/components/loading";
 const LoginPage = lazy(() => import('@/pages/login'));
 const RegisterPage = lazy(() => import('@/pages/register'));
 const DashboardPage = lazy(() => import('@/pages/dashboard'));
+const SettingsPage = lazy(() => import('@/pages/settings'));
 
 function App() {
 
@@ -16,7 +17,7 @@ function App() {
           <Route path="/" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard/" element={<DashboardPage />} />
-          {/* <Route path="/settings" element={<SettingsPage />} /> */}
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </BrowserRouter>
     </Suspense>

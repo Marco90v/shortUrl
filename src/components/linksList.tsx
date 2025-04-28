@@ -11,7 +11,7 @@ import {
   Menu,
   // MenuButton,
   // MenuList,
-  MenuItem,
+  // MenuItem,
   // useColorModeValue,
   Text,
   Flex,
@@ -26,7 +26,7 @@ import {
 import { MoreVertical, Copy, Pencil, Trash2, Search, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 // import { LinkItem } from '../types';
-import { toaster } from "@/components/ui/toaster"
+import { toaster } from "@/components/ui/toaster";
 import { useColorModeValue } from './ui/color-mode';
 
 interface LinkItem {

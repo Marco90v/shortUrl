@@ -18,3 +18,12 @@ export const linkSchema = z.object({
   url: z.string().url(),
   alias: z.string().optional(),
 });
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(8).max(30),
+  newPassword: z.string().min(8).max(30),
+  confirmPassword: z.string().min(8).max(30),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
