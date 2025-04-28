@@ -5,7 +5,6 @@ export const loginSchema = z.object({
   password: z.string().min(8).max(30),
 })
 
-
 export const registerSchema = z.object({
   email: z.string().email(),
   Password: z.string().min(8).max(30),
@@ -13,4 +12,9 @@ export const registerSchema = z.object({
 }).refine((data) => data.Password === data.Confirm, {
   message: "Passwords don't match",
   path: ["Confirm"],
+});
+
+export const linkSchema = z.object({
+  url: z.string().url(),
+  alias: z.string().optional(),
 });
