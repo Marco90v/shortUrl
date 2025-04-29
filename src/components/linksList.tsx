@@ -1,33 +1,11 @@
-import {
-  Box,
-  Table,
-  // Thead,
-  // Tbody,
-  // Tr,
-  // Th,
-  // Td,
-  Badge,
-  IconButton,
-  Menu,
-  // MenuButton,
-  // MenuList,
-  // MenuItem,
-  // useColorModeValue,
-  Text,
-  Flex,
-  Input,
-  InputGroup,
-  // InputLeftElement,
-  HStack,
-  Button,
-  Portal,
-  // useToast
-} from '@chakra-ui/react';
+import { Box, Table, Badge, Menu, Text, Flex, Input, InputGroup, HStack, Button, Portal, Link } from '@chakra-ui/react';
 import { MoreVertical, Copy, Pencil, Trash2, Search, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
-// import { LinkItem } from '../types';
 import { toaster } from "@/components/ui/toaster";
 import { useColorModeValue } from './ui/color-mode';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { searchSchema } from '@/schema/schemas';
 
 interface LinkItem {
   id: string,
@@ -77,23 +55,21 @@ const SAMPLE_LINKS: LinkItem[] = [
 ];
 
 const LinksList = () => {
+
+  const { watch, register } = useForm({
+    resolver: zodResolver(searchSchema),
+    defaultValues: {
+      search: '',
+    },
+  });
+  const watchSearch = watch("search");
+  
   const [links] = useState<LinkItem[]>(SAMPLE_LINKS);
-  const [searchQuery, setSearchQuery] = useState('');
-  // const toast = useToast();
   
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   const handleCopyLink = (shortUrl: string) => {
-    // This would normally copy to clipboard
-    // toast({
-    //   title: "Link copied!",
-    //   description: `${shortUrl} has been copied to clipboard.`,
-    //   status: "success",
-    //   duration: 2000,
-    //   isClosable: true,
-    //   position: "top",
-    // });
     toaster.create({
       title:"Link copied!",
       description: `${shortUrl} has been copied to clipboard.`,
@@ -104,9 +80,18 @@ const LinksList = () => {
     })
   };
 
-  const filteredLinks = links.filter(link => 
-    link.originalUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    link.shortUrl.toLowerCase().includes(searchQuery.toLowerCase())
+  const handlerEditLink = (id:string) => {
+    console.log(id);
+  }
+
+  const handlerDeleteLink = (id:string) => {
+    console.log(id);
+  }
+
+  const filteredLinks = links.filter(link => {
+    return link.originalUrl.toLowerCase().includes(watchSearch.toLowerCase()) ||
+    link.shortUrl.toLowerCase().includes(watchSearch.toLowerCase())
+    }
   );
 
   return (
@@ -130,15 +115,11 @@ const LinksList = () => {
       >
         <Text fontSize="lg" fontWeight="bold">Your Shortened Links</Text>
         
-        <InputGroup maxW="300px" startElement={<Search size={18} color="gray" />}>
-          {/* <InputLeftElement pointerEvents="none">
-            <Search size={18} color="gray.300" />
-          </InputLeftElement> */}
+        <InputGroup maxW="300px" startElement={<Search size={18} color="gray" />} >
           <Input 
             placeholder="Search links..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
             size="md"
+            {...register('search')}
           />
         </InputGroup>
       </Flex>
@@ -160,14 +141,13 @@ const LinksList = () => {
                 <Table.Cell maxW="300px" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
                   <HStack gap={2}>
                     <Text maxW="90%" overflow="hidden">{link.originalUrl}</Text>
-                    <IconButton
+                    <Link
                       aria-label="Open original link"
-                      // icon={<ExternalLink size={14} />}
-                      size="xs"
-                      variant="ghost"
+                      href={link.originalUrl}
+                      target="_blank"
                     >
                       <ExternalLink size={14} />
-                    </IconButton>
+                    </Link>
                   </HStack>
                 </Table.Cell>
                 <Table.Cell fontWeight="medium" color="brand.500">
@@ -192,15 +172,15 @@ const LinksList = () => {
                     <Portal>
                       <Menu.Positioner>
                         <Menu.Content padding="0">
-                          <Menu.Item value="copy" cursor="pointer">
+                          <Menu.Item value="copy" cursor="pointer" onClick={() => handleCopyLink(link.shortUrl)}>
                               <Copy size={16} />
                               Copy Link
                           </Menu.Item>
-                          <Menu.Item value="edit" cursor="pointer">
+                          <Menu.Item value="edit" cursor="pointer" onClick={() => handlerEditLink(link.id)}>
                               <Pencil size={16} />
                               Edit
                           </Menu.Item>
-                          <Menu.Item value="delete" color="red.500" _hover={{ bg: "red.50" }} cursor="pointer">
+                          <Menu.Item value="delete" color="red.500" _hover={{ bg: "red.50" }} cursor="pointer" onClick={() => handlerDeleteLink(link.id)}>
                               <Trash2 size={16} />
                               Delete
                           </Menu.Item>
@@ -209,8 +189,6 @@ const LinksList = () => {
                     </Portal>
 
                   </Menu.Root>
-
-
 
                 </Table.Cell>
               </Table.Row>

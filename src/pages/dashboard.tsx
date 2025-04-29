@@ -3,7 +3,7 @@ import LinksList from "@/components/linksList";
 import Navbar from "@/components/navbar";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { Toaster } from "@/components/ui/toaster";
-import { Box, Container, Flex, FormatNumber, Heading, SimpleGrid, Stat, StatHelpText } from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, SimpleGrid, Stat } from "@chakra-ui/react";
 import { Link, BarChart, TrendingUp } from 'lucide-react';
 
 const statBoxes = [
@@ -72,9 +72,6 @@ function Dashboard(){
                 <Stat.Root>
                   <Stat.Label>{stat.label}</Stat.Label>
                   <Stat.Label fontSize={22} fontWeight={600} color={"black"}>{stat.value}</Stat.Label>
-                  {/* <Stat.Number>{stat.value}</Stat.Number> */}
-                  {/* <FormatNumber value={stat.value} /> */}
-                  {/* <StatHelpText>{stat.helpText}</StatHelpText> */}
                 </Stat.Root>
               </Flex>
             ))}

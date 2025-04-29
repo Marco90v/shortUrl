@@ -14,6 +14,10 @@ export const registerSchema = z.object({
   path: ["Confirm"],
 });
 
+export const searchSchema = z.object({
+  search: z.string(),
+});
+
 export const linkSchema = z.object({
   url: z.string().url(),
   alias: z.string().optional(),

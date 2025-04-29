@@ -1,29 +1,24 @@
-import {
-  Box,
-  Button,
-  // FormControl,
-  // FormLabel,
-  Input,
-  VStack,
-  // useColorModeValue,
-  Heading,
-  // InputGroup,
-  // InputRightElement,
-  // useToast,
-  Flex,
-  // Text,
-  // useToastStyles,
-  Fieldset,
-  Field,
-} from '@chakra-ui/react';
+import { Box, Button, Input, VStack, Heading, Flex, Fieldset, Field } from '@chakra-ui/react';
 import { useState } from 'react';
 import { Link as LinkIcon, ArrowRight, Check } from 'lucide-react';
 import { useColorModeValue } from './ui/color-mode';
 import { toaster } from "@/components/ui/toaster"
-import { useForm } from 'react-hook-form';
+import { FieldErrors, useForm, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { typeLinkSchema } from '@/type';
 import { linkSchema } from '@/schema/schemas';
+
+interface InputUrlProps{
+  label:string;
+  required:boolean;
+  placeholder:string;
+  isLoading:boolean;
+  isSuccess:boolean;
+  register:UseFormRegister<typeLinkSchema>;
+  name:string;
+  errors:FieldErrors;
+  type:'url'|'text';
+}
 
 const LinkForm = () => {
 
@@ -31,30 +26,31 @@ const LinkForm = () => {
     resolver: zodResolver(linkSchema),
   });
   
-  // const onSubmit = (data:typeLinkSchema) => {
-  //   console.log(data);
-  // }
-
-  // const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  // const toast = useToastStyles();
+  const [isLoading, setIsLoading] = useState(false);
   
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
-  // const location = useLocation();
-
 
   const onSubmit = (data:typeLinkSchema) => {    
+    setIsLoading(true);
     console.log(data);
-    // console.log(window.location.hostname);
     const domain = window.location.hostname;
 
-    toaster.create({
-      title:"Link shortened successfully!",
-      description: `Your new short URL: ${domain}/${'auto-gen'}`,
-      type: "success",
-      duration: 2000
-    })
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsSuccess(true);
+      toaster.create({
+        title:"Link shortened successfully!",
+        description: `Your new short URL: ${domain}/${'auto-gen'}`,
+        type: "success",
+        duration: 2000
+      });
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 1000);
+
+    }, 3000);
     
   };
 
@@ -90,53 +86,24 @@ const LinkForm = () => {
         </Flex>
         
         <Fieldset.Root> 
-
-          <Fieldset.Content>
-            <Field.Root size="lg" maxW="100%" required>
-              <Field.Label>
-                Long URL <Field.RequiredIndicator />
-              </Field.Label>
-              <Input
-                type="url"
-                placeholder="Paste your long URL here"
-                size="lg"
-                borderRadius="md"
-                // isDisabled={isLoading || isSuccess}
-                {...register("url", { required: true })}
-              />
-            </Field.Root>
-          </Fieldset.Content>
-
-          <Fieldset.Content>
-            <Field.Root size="lg" maxW="100%">
-              <Field.Label>Custom Alias (optional)</Field.Label>
-              <Input
-                type="text"
-                placeholder="Choose a custom name"
-                size="lg"
-                borderRadius="md"
-                // isDisabled={isLoading || isSuccess}
-                {...register("alias")}
-              />
-            </Field.Root>
-          </Fieldset.Content>
+          <InputUlr type='url' label='Long URL' required={true} placeholder='Paste your long URL here' name='url' isLoading={isLoading} isSuccess={isSuccess} register={register} errors={errors} />
+          <InputUlr type='text' label='Custom Alias (optional)' required={false} placeholder='Choose a custom name' name='alias' isLoading={isLoading} isSuccess={isSuccess} register={register} errors={errors} />
 
           <Button
             type="submit"
-            // onClick={(e) => console.log(e) }
             colorScheme="brand.500"
             bg="brand.500"
             size="lg"
             width="100%"
             borderRadius="md"
-            // isLoading={isLoading}
-            // leftIcon={isSuccess ? <Check size={20} /> : <ArrowRight size={20} />}
+            loading={isLoading}
             loadingText="Shortening..."
             variant={isSuccess ? "outline" : "solid"}
             _hover={isSuccess ? { bg: "green.50" } : undefined}
             color={isSuccess ? "green.500" : undefined}
             borderColor={isSuccess ? "green.500" : undefined}
           >
+            {isSuccess ? <Check size={20} /> : <ArrowRight size={20} />}
             {isSuccess ? "Link Shortened!" : "Shorten URL"}
           </Button>
         </Fieldset.Root>
@@ -145,5 +112,26 @@ const LinkForm = () => {
     </Box>
   );
 };
+
+function InputUlr({label, required, type, placeholder, isLoading, isSuccess, register, name, errors}:InputUrlProps){
+  return(
+    <Fieldset.Content>
+      <Field.Root size="lg" maxW="100%" required={required}>
+        <Field.Label>
+          {label} <Field.RequiredIndicator />
+        </Field.Label>
+        <Input
+          type={type}
+          placeholder={placeholder}
+          size="lg"
+          borderRadius="md"
+          disabled={isLoading || isSuccess}
+          {...register(name, { required: required })}
+        />
+        <Field.ErrorText>{errors[name]?.message}</Field.ErrorText>
+      </Field.Root>
+    </Fieldset.Content>
+  )
+}
 
 export default LinkForm;
