@@ -1,4 +1,4 @@
-import { Box, Flex, Text, IconButton, Button, Stack, useDisclosure, Collapsible} from '@chakra-ui/react';
+import { Box, Flex, Text, IconButton, Button, Stack, useDisclosure, Collapsible, Link as L} from '@chakra-ui/react';
 // import { Link as RouterLink } from 'react-router-dom';
 import { Menu, X, Link, Settings, House } from 'lucide-react';
 import { useColorModeValue } from './ui/color-mode'
@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   },
   {
     label: 'Settings',
-    href: '/dashboard/Settings',
+    href: '/dashboard/settings',
     icon: <Settings size={16} />
   }
 ];;
@@ -138,21 +138,23 @@ const DesktopNav = () => {
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Box
-            // as={RouterLink}
             p={2}
-            // to={navItem.href ?? '#'}
             fontSize={'sm'}
             fontWeight={500}
             color={linkColor}
-            _hover={{
-              textDecoration: 'none',
-              color: linkHoverColor,
-            }}
           >
-            <Flex gap={2} alignContent={'center'} alignItems={'center'}>
+            <L
+              alignContent={'center'}
+              alignItems={'center'}
+              _hover={{
+                textDecoration: 'none',
+                color: linkHoverColor,
+              }}
+              href={navItem.href ?? '#'}
+            >
               {navItem.icon}
               {navItem.label}
-            </Flex>
+            </L>
           </Box>
         </Box>
       ))}
@@ -172,24 +174,25 @@ const MobileNav = () => {
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
       <Button
-            // as={RouterLink}
-            // to="/"
-            // display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'red.400'}
-            _hover={{
-              bg: 'red.500',
-            }}
-          >
-            Sign Out
-          </Button>
+        // as={RouterLink}
+        // to="/"
+        display={{ base: 'none', md: 'inline-flex' }} 
+        fontSize={'sm'}
+        fontWeight={600}
+        color={'white'}
+        bg={'red.400'}
+        _hover={{
+          bg: 'red.500',
+        }}
+      >
+        Sign Out
+      </Button>
     </Stack>
   );
 };
 
 const MobileNavItem = ({ label,icon, href }: { label: string; icon:React.JSX.Element; href: string }) => {
+  // console.log(href)
   return (
     <Stack gap={4}>
       <Box
@@ -202,7 +205,7 @@ const MobileNavItem = ({ label,icon, href }: { label: string; icon:React.JSX.Ele
           textDecoration: 'none',
         }}
       >
-        <Text
+        <L  
           fontWeight={600}
           color={useColorModeValue('gray.600', 'gray.200')}
           alignContent={'center'}
@@ -210,10 +213,11 @@ const MobileNavItem = ({ label,icon, href }: { label: string; icon:React.JSX.Ele
           flexDirection={'row'}
           display={'flex'}
           gap={2}
+          href={href ?? '#'}
         >
           {icon}
           {label}
-        </Text>
+        </L>
       </Box>
     </Stack>
   );

@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Box, Container, Heading, VStack, Input, Button, InputGroup, IconButton, Text, HStack, Fieldset, Field, Separator } from '@chakra-ui/react';
+import { Box, Heading, VStack, Input, Button, InputGroup, IconButton, Text, HStack, Fieldset, Field, Separator } from '@chakra-ui/react';
 import { FieldErrors, useForm, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Navbar from '@/components/navbar';
-import { Toaster, toaster } from "@/components/ui/toaster";
+import { toaster } from "@/components/ui/toaster";
 import { useColorModeValue } from '@/components/ui/color-mode';
 import { changePasswordSchema } from '@/schema/schemas';
 import { typeChangePasswordSchema } from '@/type';
@@ -48,52 +47,48 @@ const SettingsPage = () => {
   };
   
   return (
-    <Box minH="100vh" bg="gray.50">
-      <Navbar />
-      <Container maxW="container.md" py={8}>
-        <Heading size="lg" mb={6}>Settings</Heading>
-        <Box
-          as="form"
-          onSubmit={handleSubmit(onSubmit)}
-          bg={bgColor}
-          borderWidth="1px"
-          borderColor={borderColor}
-          borderRadius="lg"
-          boxShadow="md"
-          p={6}
-        >
-          <VStack gap={6} align="stretch">
-            <Heading size="md">Change Password</Heading>
-            <Text color="gray.600" fontSize="sm">
-              Update your password to keep your account secure. We recommend using a strong, unique password.
-            </Text>
+    <>
+      <Heading size="lg" mb={6}>Settings</Heading>
+      <Box
+        as="form"
+        onSubmit={handleSubmit(onSubmit)}
+        bg={bgColor}
+        borderWidth="1px"
+        borderColor={borderColor}
+        borderRadius="lg"
+        boxShadow="md"
+        p={6}
+      >
+        <VStack gap={6} align="stretch">
+          <Heading size="md">Change Password</Heading>
+          <Text color="gray.600" fontSize="sm">
+            Update your password to keep your account secure. We recommend using a strong, unique password.
+          </Text>
+          
+          <Separator variant="solid" />
+
+          <Fieldset.Root>
+            <InputChangePassword label='Current Password' placeholder='Enter your current password' register={register} name='currentPassword' errors={errors} />
+            <InputChangePassword label='New Password' placeholder='Enter your new password' register={register} name='newPassword' errors={errors} />
+            <InputChangePassword label='Confirm New Password' placeholder='Confirm your new password' register={register} name='confirmPassword' errors={errors} />
             
-            <Separator variant="solid" />
+            <HStack justifyContent="flex-end">
+              <Button
+                type="submit"
+                colorScheme="brand.500"
+                bg="brand.500"
+                loading={isLoading}
+                loadingText="Updating..."
+              >
+                <Save size={18} />
+                Update Password
+              </Button>
+            </HStack>
+          </Fieldset.Root>
 
-            <Fieldset.Root>
-              <InputChangePassword label='Current Password' placeholder='Enter your current password' register={register} name='currentPassword' errors={errors} />
-              <InputChangePassword label='New Password' placeholder='Enter your new password' register={register} name='newPassword' errors={errors} />
-              <InputChangePassword label='Confirm New Password' placeholder='Confirm your new password' register={register} name='confirmPassword' errors={errors} />
-              
-              <HStack justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  colorScheme="brand.500"
-                  bg="brand.500"
-                  loading={isLoading}
-                  loadingText="Updating..."
-                >
-                  <Save size={18} />
-                  Update Password
-                </Button>
-              </HStack>
-            </Fieldset.Root>
-
-          </VStack>
-        </Box>
-      </Container>
-      <Toaster />
-    </Box>
+        </VStack>
+      </Box>
+    </>
   );
 };
 
