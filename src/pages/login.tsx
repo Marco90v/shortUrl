@@ -7,16 +7,40 @@ import { loginSchema } from "@/schema/schemas";
 import { typeLoginSchema } from "@/type";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import Password from "@/components/password";
-import { Toaster } from "@/components/ui/toaster";
+import { toaster, Toaster } from "@/components/ui/toaster";
+import { signIn } from "@/services/firebase";
+import { useAuthStore } from "@/store/auth";
+import { useShallow } from "zustand/shallow";
+import { useNavigate } from "react-router";
 
 function Login() {
 
-  const { register, handleSubmit, formState: { errors }, } = useForm({
+  const {setUser} = useAuthStore(
+    useShallow( (state => ({
+      setUser: state.setUser,
+    })))
+  )
+
+  const { register, handleSubmit, reset, formState: { errors }, } = useForm({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data:typeLoginSchema) => {
-    console.log(data);
+  const navigate = useNavigate();
+
+  const onSubmit = async (data:typeLoginSchema) => {
+    const user = await signIn(data.email, data.password);
+    if(user.user){
+      setUser(user.user);
+      navigate("/dashboard");
+    }
+    if(user.code === "Started")reset();
+    toaster.create({
+      title: user.code,
+      description: user.message,
+      status: user.code === "Error" ? "error" : "success",
+      duration: 5000,
+      type: user.code === "Error" ? "error" : "success",
+    });
   }
 
   const bgColor = useColorModeValue('white', 'gray.800');

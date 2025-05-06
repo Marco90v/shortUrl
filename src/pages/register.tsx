@@ -27,7 +27,7 @@ function Register() {
       duration: 5000,
       type: user.code === "Error" ? "error" : "success",
     });
-    
+
   }
 
   const bgColor = useColorModeValue('white', 'gray.800');

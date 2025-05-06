@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
 
 // import { toaster } from "@/components/ui/toaster";
 
@@ -25,9 +25,14 @@ export const createUser = async (email:string, password:string):Promise<{code:st
   });
 }
 
-export const signIn = async (email:string, password:string) => {
-  const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  return userCredential;
+export const signIn = async (email:string, password:string):Promise<{code:string, message:string, user:User | null}> => {
+  // const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  // return userCredential;
+  return await signInWithEmailAndPassword(auth, email, password).then((userCredential:UserCredential)=>{
+    return {code:"Started", message:"Session started", user:userCredential.user};
+  }).catch((error) => { 
+    return {code:"Error", message:error.message, user:null};
+  });
 }
 
 export const sign_Out = async () => {
