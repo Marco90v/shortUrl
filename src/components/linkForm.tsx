@@ -7,6 +7,7 @@ import { FieldErrors, useForm, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { typeLinkSchema } from '@/type';
 import { linkSchema } from '@/schema/schemas';
+import { shortenUrl } from '@/utils/urlShortener';
 
 interface InputUrlProps{
   label:string;
@@ -34,7 +35,23 @@ const LinkForm = () => {
 
   const onSubmit = (data:typeLinkSchema) => {    
     setIsLoading(true);
-    console.log(data);
+
+    const currentDate = new Date().toJSON().slice(0, 10);
+    const short = shortenUrl();
+    const ID = crypto.randomUUID();
+
+    const newLink = {
+      id: ID,
+      originalUrl: data.url,
+      shortUrl: short,
+      createdAt: currentDate,
+      clicks: 0,
+      alias: data.alias,
+    };
+
+    // console.log(data);
+    // console.log(newLink);
+
     const domain = window.location.hostname;
 
     setTimeout(() => {
