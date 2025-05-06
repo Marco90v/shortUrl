@@ -7,6 +7,7 @@ import { loginSchema } from "@/schema/schemas";
 import { typeLoginSchema } from "@/type";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import Password from "@/components/password";
+import { Toaster } from "@/components/ui/toaster";
 
 function Login() {
 
@@ -77,7 +78,7 @@ function Login() {
                   <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
                 </Field.Root>
 
-                <Password register={register} name="Password" error={errors.password} />
+                <Password register={register} name="password" label="Password" error={errors.password} />
 
               </Fieldset.Content>
 
@@ -96,6 +97,7 @@ function Login() {
           Register
         </L>
       </VStack>
+      <Toaster />
     </Container>
   )
 }

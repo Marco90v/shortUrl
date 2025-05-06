@@ -1,6 +1,8 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router"
 import Loading from "@/components/loading";
+// import { getUser } from "./services/firebase";
+// import { getAuth } from "firebase/auth";
 
 const LoginPage = lazy(() => import('@/pages/login'));
 const RegisterPage = lazy(() => import('@/pages/register'));
@@ -15,6 +17,9 @@ function ProtecterRoutes(){
 }
 
 function App() {
+
+  // const a = getAuth();
+  // console.log(a.currentUser);
 
   return (
     <Suspense fallback={<Loading />}>

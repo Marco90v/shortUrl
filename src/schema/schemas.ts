@@ -7,11 +7,11 @@ export const loginSchema = z.object({
 
 export const registerSchema = z.object({
   email: z.string().email(),
-  Password: z.string().min(8).max(30),
-  Confirm: z.string().min(8).max(30),
-}).refine((data) => data.Password === data.Confirm, {
+  password: z.string().min(8).max(30),
+  confirm: z.string().min(8).max(30),
+}).refine((data) => data.password === data.confirm, {
   message: "Passwords don't match",
-  path: ["Confirm"],
+  path: ["confirm"],
 });
 
 export const searchSchema = z.object({

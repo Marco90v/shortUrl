@@ -6,17 +6,18 @@ import { typeLoginSchema } from "@/type";
 
 interface PasswordProps {
   register: UseFormRegister<typeLoginSchema>;
-  name: "Password" | "Confirm";
+  name: "password" | "confirm";
+  label: string;
   error?: FieldError | undefined;
 }
 
-function Password({register, name, error}:PasswordProps){
+function Password({register, name, label, error}:PasswordProps){
 
   const [showPassword, setShowPassword] = useState(false);
 
   return(
     <Field.Root invalid={!!error}>
-      <Field.Label>{name}</Field.Label>
+      <Field.Label>{label}</Field.Label>
       <InputGroup bgSize={"lg"}
         endElement={
           <IconButton

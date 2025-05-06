@@ -7,16 +7,27 @@ import { registerSchema } from "@/schema/schemas";
 import { typeRegisterSchema } from "@/type";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import Password from "@/components/password";
-
+import { createUser } from "@/services/firebase";
+import { toaster, Toaster } from "@/components/ui/toaster";
 
 function Register() {
 
-  const { register, handleSubmit, formState: { errors }, } = useForm({
+  const { register, handleSubmit, reset, formState: { errors }, } = useForm({
     resolver: zodResolver(registerSchema),
   });
   
-  const onSubmit = (data:typeRegisterSchema) => {
-    console.log(data);
+  const onSubmit = async (data:typeRegisterSchema) => {
+    // console.log(data);
+    const user = await createUser(data.email, data.Password);
+    if(user.code === "Create")reset();
+    toaster.create({
+      title: user.code,
+      description: user.message,
+      status:user.code === "Error" ? "error" : "success",
+      duration: 5000,
+      type: user.code === "Error" ? "error" : "success",
+    });
+    
   }
 
   const bgColor = useColorModeValue('white', 'gray.800');
@@ -78,9 +89,9 @@ function Register() {
                   <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
                 </Field.Root>
 
-                <Password register={register} name="Password" error={errors.Password} />
+                <Password register={register} name="password" label="Password" error={errors.password} />
 
-                <Password register={register} name="Confirm" error={errors.Confirm} />
+                <Password register={register} name="confirm" label="Confirm" error={errors.confirm} />
 
               </Fieldset.Content>
 
@@ -99,6 +110,7 @@ function Register() {
           Login
         </L>
       </VStack>
+      <Toaster />
     </Container>
   )
 }
