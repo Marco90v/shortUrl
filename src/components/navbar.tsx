@@ -2,6 +2,9 @@ import { Box, Flex, Text, IconButton, Button, Stack, useDisclosure, Collapsible,
 // import { Link as RouterLink } from 'react-router-dom';
 import { Menu, X, Link, Settings, House } from 'lucide-react';
 import { useColorModeValue } from './ui/color-mode'
+import { sign_Out } from '@/services/firebase';
+import { useAuthStore } from '@/store/auth';
+import { useShallow } from 'zustand/shallow';
 
 const NAV_ITEMS = [
   {
@@ -14,9 +17,39 @@ const NAV_ITEMS = [
     href: '/dashboard/settings',
     icon: <Settings size={16} />
   }
-];;
+];
+
+const ButtonSignOut = () => {
+  const {setUser} = useAuthStore(
+    useShallow( (state => ({
+      setUser: state.setUser,
+    })))
+  );
+  const signOut = () => {
+    sign_Out();
+    setUser(null);
+  }
+  return(
+    <Button
+      // as={RouterLink}
+      // to="/"
+      display={{ base: 'none', md: 'inline-flex' }} 
+      fontSize={'sm'}
+      fontWeight={600}
+      color={'white'}
+      bg={'red.400'}
+      _hover={{
+        bg: 'red.500',
+      }}
+      onClick={signOut}
+    >
+      Sign Out
+    </Button>
+  )
+}
 
 const Navbar = () => {
+
   const { open, onToggle } = useDisclosure();
   
   return (
@@ -99,20 +132,7 @@ const Navbar = () => {
             Settings
           </Button> */}
           
-          <Button
-            // as={RouterLink}
-            // to="/"
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'red.400'}
-            _hover={{
-              bg: 'red.500',
-            }}
-          >
-            Sign Out
-          </Button>
+          <ButtonSignOut />
         </Stack>
       </Flex>
 
@@ -176,7 +196,7 @@ const MobileNav = () => {
       <Button
         // as={RouterLink}
         // to="/"
-        display={{ base: 'none', md: 'inline-flex' }} 
+        // display={{ base: 'none', md: 'inline-flex' }} 
         fontSize={'sm'}
         fontWeight={600}
         color={'white'}
