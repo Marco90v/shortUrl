@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router"
 import { useShallow } from "zustand/shallow";
 import { useAuthStore } from "@/store/auth";
-import { PRIVATE, PUBLIC } from "@/utils/const";
+import { PRIVATE, PUBLIC, RUTES } from "@/utils/const";
 import Loading from "@/components/loading";
 
 const LoginPage = lazy(() => import('@/pages/login'));
@@ -40,17 +40,22 @@ function App() {
     <Suspense fallback={<Loading />}>
       <BrowserRouter>
         <Routes>
-          <Route path="/:shortId" element={<RedirectPage />} />
+          {/* Rutas publicas LOGIN y REGISTER */}
           <Route element={<ProtecterRoutes rutesProtecter={PUBLIC} />} >
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path={RUTES.LOGIN} element={<LoginPage />} />
+            <Route path={RUTES.REGISTER} element={<RegisterPage />} />
           </Route>
+
+          {/* Rutas privadasm DASHBOARD y SETTINGS */}
           <Route element={<ProtecterRoutes rutesProtecter={PRIVATE} />} >
-            <Route path="dashboard" element={<DashboardPage />} > 
+            <Route path={RUTES.DASHBOARD} element={<DashboardPage />} > 
               <Route index element={<HomePage />} />
-              <Route path="settings" element={<SettingsPage />} />
+              <Route path={RUTES.SETTINGS} element={<SettingsPage />} />
             </Route>
           </Route>
+          
+          {/* Ruta de enlaces cortos, redirecciona a la pagina de destino */}
+          <Route path={RUTES.REDIRECT} element={<RedirectPage />} />
         </Routes>
       </BrowserRouter>
     </Suspense>
