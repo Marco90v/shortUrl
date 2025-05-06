@@ -18,7 +18,7 @@ function Register() {
   
   const onSubmit = async (data:typeRegisterSchema) => {
     // console.log(data);
-    const user = await createUser(data.email, data.Password);
+    const user = await createUser(data.email, data.password);
     if(user.code === "Create")reset();
     toaster.create({
       title: user.code,
