@@ -40,7 +40,7 @@ const LinkForm = () => {
     })))
   );
 
-  const { register, handleSubmit, formState: { errors }, } = useForm({
+  const { register, handleSubmit, reset, formState: { errors }, } = useForm({
     resolver: zodResolver(linkSchema),
   });
   
@@ -82,6 +82,7 @@ const LinkForm = () => {
         setTimeout(() => {
           setIsSuccess(false);
         }, 2000);
+        reset();
       }
     }
   };
