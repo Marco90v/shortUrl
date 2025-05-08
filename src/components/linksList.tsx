@@ -1,12 +1,16 @@
 import { Box, Table, Badge, Menu, Text, Flex, Input, InputGroup, HStack, Button, Portal, Link } from '@chakra-ui/react';
 import { MoreVertical, Copy, Pencil, Trash2, Search, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toaster } from "@/components/ui/toaster";
 import { useColorModeValue } from './ui/color-mode';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { searchSchema } from '@/schema/schemas';
 import { LinkItem } from '@/type';
+import { useAuthStore } from '@/store/auth';
+import { useShallow } from 'zustand/shallow';
+import { getData } from '@/services/firebase';
+import { useLinksStore } from '@/store/data';
 
 // interface LinkItem {
 //   id: string,
@@ -56,7 +60,33 @@ const SAMPLE_LINKS: LinkItem[] = [
   }
 ];
 
+const domain = window.location.hostname;
+
 const LinksList = () => {
+
+  const {user} = useAuthStore(
+    useShallow( (state => ({
+      user: state.user,
+    })))
+  );
+  const {links, setLinks} = useLinksStore(
+    useShallow( (state => ({
+      links: state.links,
+      setLinks: state.setLinks,
+    })))
+  );
+  // console.log(l);
+  // const [links, setLinks] = useState<LinkItem[]>([]);
+
+  useEffect(() => {
+    if(user?.email){
+      // console.log(user?.email);
+      getData(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
+        // console.log(res);
+        setLinks(res.links);
+      });
+    }
+  }, [links.length, setLinks, user?.email]);
 
   const { watch, register } = useForm({
     resolver: zodResolver(searchSchema),
@@ -64,9 +94,10 @@ const LinksList = () => {
       search: '',
     },
   });
+
   const watchSearch = watch("search");
   
-  const [links] = useState<LinkItem[]>(SAMPLE_LINKS);
+  // const [links] = useState<LinkItem[]>(SAMPLE_LINKS);
   
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
@@ -153,7 +184,7 @@ const LinksList = () => {
                   </HStack>
                 </Table.Cell>
                 <Table.Cell fontWeight="medium" color="brand.500">
-                  {link.shortUrl}
+                  {domain}/{link.shortUrl}
                 </Table.Cell>
                 <Table.Cell>{link.createdAt}</Table.Cell>
                 <Table.Cell >
