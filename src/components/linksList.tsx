@@ -10,7 +10,7 @@ import { LinkItem } from '@/type';
 import { useAuthStore } from '@/store/auth';
 import { useShallow } from 'zustand/shallow';
 import { getData } from '@/services/firebase';
-import { useLinksStore } from '@/store/data';
+import { useLinksStore } from '@/store/links';
 
 // interface LinkItem {
 //   id: string,
@@ -75,18 +75,6 @@ const LinksList = () => {
       setLinks: state.setLinks,
     })))
   );
-  // console.log(l);
-  // const [links, setLinks] = useState<LinkItem[]>([]);
-
-  useEffect(() => {
-    if(user?.email){
-      // console.log(user?.email);
-      getData(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
-        // console.log(res);
-        setLinks(res.links);
-      });
-    }
-  }, [links.length, setLinks, user?.email]);
 
   const { watch, register } = useForm({
     resolver: zodResolver(searchSchema),
@@ -96,11 +84,17 @@ const LinksList = () => {
   });
 
   const watchSearch = watch("search");
-  
-  // const [links] = useState<LinkItem[]>(SAMPLE_LINKS);
-  
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+
+
+  useEffect(() => {
+    if(user?.email){
+      getData(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
+        setLinks(res.links);
+      });
+    }
+  }, [links.length, setLinks, user?.email]);
 
   const handleCopyLink = (shortUrl: string) => {
     toaster.create({

@@ -10,8 +10,9 @@ import { linkSchema } from '@/schema/schemas';
 import { shortenUrl } from '@/utils/urlShortener';
 import { useAuthStore } from '@/store/auth';
 import { useShallow } from 'zustand/shallow';
-import { addLink } from '@/services/firebase';
+import { addLinkFirebase } from '@/services/firebase';
 import { statusToaster } from '@/utils/functions';
+import { useLinksStore } from '@/store/links';
 
 interface InputUrlProps{
   label:string;
@@ -28,10 +29,16 @@ interface InputUrlProps{
 const LinkForm = () => {
 
   const {user} = useAuthStore(
-      useShallow( (state => ({
-        user: state.user,
-      })))
-    )
+    useShallow( (state => ({
+      user: state.user,
+    })))
+  );
+
+  const {addLink} = useLinksStore(
+    useShallow( (state => ({
+      addLink: state.addLink,
+    })))
+  );
 
   const { register, handleSubmit, formState: { errors }, } = useForm({
     resolver: zodResolver(linkSchema),
@@ -60,7 +67,7 @@ const LinkForm = () => {
     };
 
     if(user?.email){
-      const rest = await addLink(user.email, newLink);
+      const rest = await addLinkFirebase(user.email, newLink);
       toaster.create({
         title: rest.code,
         description: rest.message,
@@ -70,6 +77,7 @@ const LinkForm = () => {
       });
       setIsLoading(false);
       if(rest.code !== 'Error'){
+        addLink(newLink);
         setIsSuccess(true);
         setTimeout(() => {
           setIsSuccess(false);

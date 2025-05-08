@@ -45,7 +45,7 @@ export const sign_Out = async () => {
 //   return user;
 // }
 
-export const addLink = async (email:string, link:LinkItem):Promise<{code:string, message:string}> => {
+export const addLinkFirebase = async (email:string, link:LinkItem):Promise<{code:string, message:string}> => {
   const domain = window.location.hostname;
   return await setDoc(doc(db, email, link.id), link).then(() => {
     return {code:"Link shortened successfully!", message:`Your new short URL: ${domain}/${link.shortUrl}`};

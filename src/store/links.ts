@@ -17,6 +17,7 @@ import { LinkItem } from '@/type';
 interface LinksState {
   links:LinkItem[];
   setLinks: (link:LinkItem[]) => void;
+  addLink: (link:LinkItem) => void;
 }
 
 export const useLinksStore = create<LinksState>()(
@@ -24,6 +25,7 @@ export const useLinksStore = create<LinksState>()(
     (set) => ({
       links: [],
       setLinks: (links) => set((state) => ({ ...state, links })),
+      addLink: (link) => set((state) => ({ ...state, links: [...state.links, link] })),     
     }),
     { name: 'linksStore' },
   ),
