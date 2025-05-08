@@ -5,9 +5,13 @@ import { useColorModeValue } from './ui/color-mode';
 import { toaster } from "@/components/ui/toaster"
 import { FieldErrors, useForm, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { typeLinkSchema } from '@/type';
+import { LinkItem, typeLinkSchema } from '@/type';
 import { linkSchema } from '@/schema/schemas';
 import { shortenUrl } from '@/utils/urlShortener';
+import { useAuthStore } from '@/store/auth';
+import { useShallow } from 'zustand/shallow';
+import { addLink } from '@/services/firebase';
+import { statusToaster } from '@/utils/functions';
 
 interface InputUrlProps{
   label:string;
@@ -23,6 +27,12 @@ interface InputUrlProps{
 
 const LinkForm = () => {
 
+  const {user} = useAuthStore(
+      useShallow( (state => ({
+        user: state.user,
+      })))
+    )
+
   const { register, handleSubmit, formState: { errors }, } = useForm({
     resolver: zodResolver(linkSchema),
   });
@@ -33,14 +43,14 @@ const LinkForm = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
-  const onSubmit = (data:typeLinkSchema) => {    
+  const onSubmit = async (data:typeLinkSchema) => {    
     setIsLoading(true);
 
     const currentDate = new Date().toJSON().slice(0, 10);
     const short = shortenUrl();
     const ID = crypto.randomUUID();
 
-    const newLink = {
+    const newLink:LinkItem = {
       id: ID,
       originalUrl: data.url,
       shortUrl: short,
@@ -49,26 +59,23 @@ const LinkForm = () => {
       alias: data.alias,
     };
 
-    // console.log(data);
-    // console.log(newLink);
-
-    const domain = window.location.hostname;
-
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
+    if(user?.email){
+      const rest = await addLink(user.email, newLink);
       toaster.create({
-        title:"Link shortened successfully!",
-        description: `Your new short URL: ${domain}/${'auto-gen'}`,
-        type: "success",
+        title: rest.code,
+        description: rest.message,
+        status: statusToaster(rest.code),
+        type: statusToaster(rest.code),
         duration: 2000
       });
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 1000);
-
-    }, 3000);
-    
+      setIsLoading(false);
+      if(rest.code !== 'Error'){
+        setIsSuccess(true);
+        setTimeout(() => {
+          setIsSuccess(false);
+        }, 2000);
+      }
+    }
   };
 
   return (
@@ -119,6 +126,7 @@ const LinkForm = () => {
             _hover={isSuccess ? { bg: "green.50" } : undefined}
             color={isSuccess ? "green.500" : undefined}
             borderColor={isSuccess ? "green.500" : undefined}
+            disabled={isLoading || isSuccess}
           >
             {isSuccess ? <Check size={20} /> : <ArrowRight size={20} />}
             {isSuccess ? "Link Shortened!" : "Shorten URL"}

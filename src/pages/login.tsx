@@ -12,6 +12,7 @@ import { signIn } from "@/services/firebase";
 import { useAuthStore } from "@/store/auth";
 import { useShallow } from "zustand/shallow";
 import { useNavigate } from "react-router";
+import { statusToaster } from "@/utils/functions";
 
 function Login() {
 
@@ -37,9 +38,9 @@ function Login() {
     toaster.create({
       title: user.code,
       description: user.message,
-      status: user.code === "Error" ? "error" : "success",
+      status: statusToaster(user.code),
       duration: 5000,
-      type: user.code === "Error" ? "error" : "success",
+      type: statusToaster(user.code),
     });
   }
 

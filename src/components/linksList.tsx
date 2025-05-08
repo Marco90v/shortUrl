@@ -6,14 +6,16 @@ import { useColorModeValue } from './ui/color-mode';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { searchSchema } from '@/schema/schemas';
+import { LinkItem } from '@/type';
 
-interface LinkItem {
-  id: string,
-  originalUrl: string,
-  shortUrl: string,
-  createdAt: string,
-  clicks: number
-}
+// interface LinkItem {
+//   id: string,
+//   originalUrl: string,
+//   shortUrl: string,
+//   createdAt: string,
+//   clicks: number,
+//   alias?: string,
+// }
 
 // Sample data for the design
 const SAMPLE_LINKS: LinkItem[] = [

@@ -1,4 +1,5 @@
-const domain = "https://mi.dominio/";
+// Gracias ChatGPT por este fragmento de código
+// const domain = "https://mi.dominio/";
 /**
  * Convierte un Uint8Array a base64 URL safe
  * @param {Uint8Array} bytes
@@ -33,5 +34,5 @@ function generateRandomCode(length = 8) {
 export function shortenUrl(length?: number) {
   const finalLength = length ?? Math.floor(Math.random() * 5) + 8; // 8 a 12
   const code = generateRandomCode(finalLength);
-  return `${domain}${code}`;
+  return code;
 }

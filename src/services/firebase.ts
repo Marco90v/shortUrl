@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
+import { LinkItem } from "@/type";
 
 // import { toaster } from "@/components/ui/toaster";
 
@@ -39,7 +40,17 @@ export const sign_Out = async () => {
   await signOut(auth);
 }
 
-export const getUser = async () => {
-  const user = auth.currentUser;
-  return user;
+// export const getUser = async () => {
+//   const user = auth.currentUser;
+//   return user;
+// }
+
+export const addLink = async (email:string, link:LinkItem):Promise<{code:string, message:string}> => {
+  const domain = window.location.hostname;
+  return await setDoc(doc(db, email, link.id), link).then(() => {
+    return {code:"Link shortened successfully!", message:`Your new short URL: ${domain}/${link.shortUrl}`};
+  }).catch((error) => {
+    console.error("Error adding document: ", error);
+    return {code:"Error", message:error.message};
+  });
 }
