@@ -1,6 +1,6 @@
-import { Box, Table, Badge, Menu, Text, Flex, Input, InputGroup, HStack, Button, Portal, Link } from '@chakra-ui/react';
+import { Box, Table, Badge, Menu, Text, Flex, Input, InputGroup, HStack, Button, Portal, Link, Clipboard } from '@chakra-ui/react';
 import { MoreVertical, Copy, Pencil, Trash2, Search, ExternalLink } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toaster } from "@/components/ui/toaster";
 import { useColorModeValue } from './ui/color-mode';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,43 +22,43 @@ import { useLinksStore } from '@/store/links';
 // }
 
 // Sample data for the design
-const SAMPLE_LINKS: LinkItem[] = [
-  {
-    id: '1',
-    originalUrl: 'https://www.verylongwebsitename.com/some/extremely/long/path/to/article/about/technology',
-    shortUrl: 'shrt.ly/tech1',
-    createdAt: '2023-05-15',
-    clicks: 1245
-  },
-  {
-    id: '2',
-    originalUrl: 'https://www.example.com/blog/how-to-create-short-urls',
-    shortUrl: 'shrt.ly/blog',
-    createdAt: '2023-06-22',
-    clicks: 873
-  },
-  {
-    id: '3',
-    originalUrl: 'https://www.longwebsiteaddress.com/products/special-offer',
-    shortUrl: 'shrt.ly/offer',
-    createdAt: '2023-07-10',
-    clicks: 2184
-  },
-  {
-    id: '4',
-    originalUrl: 'https://www.example.org/documentation/advanced-features',
-    shortUrl: 'shrt.ly/docs',
-    createdAt: '2023-08-05',
-    clicks: 642
-  },
-  {
-    id: '5',
-    originalUrl: 'https://www.examplecompany.co/contact/customer-support',
-    shortUrl: 'shrt.ly/help',
-    createdAt: '2023-09-18',
-    clicks: 397
-  }
-];
+// const SAMPLE_LINKS: LinkItem[] = [
+//   {
+//     id: '1',
+//     originalUrl: 'https://www.verylongwebsitename.com/some/extremely/long/path/to/article/about/technology',
+//     shortUrl: 'shrt.ly/tech1',
+//     createdAt: '2023-05-15',
+//     clicks: 1245
+//   },
+//   {
+//     id: '2',
+//     originalUrl: 'https://www.example.com/blog/how-to-create-short-urls',
+//     shortUrl: 'shrt.ly/blog',
+//     createdAt: '2023-06-22',
+//     clicks: 873
+//   },
+//   {
+//     id: '3',
+//     originalUrl: 'https://www.longwebsiteaddress.com/products/special-offer',
+//     shortUrl: 'shrt.ly/offer',
+//     createdAt: '2023-07-10',
+//     clicks: 2184
+//   },
+//   {
+//     id: '4',
+//     originalUrl: 'https://www.example.org/documentation/advanced-features',
+//     shortUrl: 'shrt.ly/docs',
+//     createdAt: '2023-08-05',
+//     clicks: 642
+//   },
+//   {
+//     id: '5',
+//     originalUrl: 'https://www.examplecompany.co/contact/customer-support',
+//     shortUrl: 'shrt.ly/help',
+//     createdAt: '2023-09-18',
+//     clicks: 397
+//   }
+// ];
 
 const domain = window.location.hostname;
 
@@ -87,7 +87,6 @@ const LinksList = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
-
   useEffect(() => {
     if(user?.email){
       getData(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
@@ -96,15 +95,17 @@ const LinksList = () => {
     }
   }, [links.length, setLinks, user?.email]);
 
-  const handleCopyLink = (shortUrl: string) => {
-    toaster.create({
-      title:"Link copied!",
-      description: `${shortUrl} has been copied to clipboard.`,
-      type: "success",
-      duration: 2000,
-      position: "top",
-      isClosable: true,
-    })
+  const handleCopyLink = (copied:boolean, shortUrl: string) => {
+    if(copied){
+      toaster.create({
+        title:"Link copied!",
+        description: `${domain}/${shortUrl} has been copied to clipboard.`,
+        type: "success",
+        duration: 2000,
+        position: "top",
+        isClosable: true,
+      })
+    }
   };
 
   const handlerEditLink = (id:string) => {
@@ -199,10 +200,17 @@ const LinksList = () => {
                     <Portal>
                       <Menu.Positioner>
                         <Menu.Content padding="0">
-                          <Menu.Item value="copy" cursor="pointer" onClick={() => handleCopyLink(link.shortUrl)}>
-                              <Copy size={16} />
-                              Copy Link
-                          </Menu.Item>
+                          <Clipboard.Root
+                            value={`${domain}/${link.shortUrl}`}
+                            onStatusChange={ ({copied}:{copied:boolean}) => handleCopyLink(copied, link.shortUrl) }
+                          >
+                            <Clipboard.Trigger asChild> 
+                              <Menu.Item value="copy" cursor="pointer">
+                                  <Copy size={16} />
+                                  Copy Link
+                              </Menu.Item>
+                            </Clipboard.Trigger>
+                          </Clipboard.Root>
                           <Menu.Item value="edit" cursor="pointer" onClick={() => handlerEditLink(link.id)}>
                               <Pencil size={16} />
                               Edit
