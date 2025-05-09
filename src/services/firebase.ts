@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { collection, deleteDoc, doc, DocumentData, getDocs, getFirestore, query, QueryDocumentSnapshot, setDoc } from "firebase/firestore";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updatePassword, User, UserCredential } from "firebase/auth";
 import { LinkItem } from "@/type";
 
 const firebaseConfig = {
@@ -58,6 +58,17 @@ export const deleteLink = async (email:string | null, id:string):Promise<{code:s
     return {code:"Link deleted successfully!", message:"Your link has been deleted."};
   }).catch((error) => {
     console.error("Error deleting document: ", error);
+    return {code:"Error", message:error.message};
+  });
+}
+
+export const changePassword = async (newPassword:string):Promise<{code:string, message:string}> => {
+  const user = auth.currentUser;
+  if(!user) return {code:"Error", message:"No user found"};
+  return await updatePassword(user, newPassword).then(() => {
+    return {code:"Password updated successfully!", message:"Your password has been updated."};
+  }).catch((error) => {
+    console.error("Error updating password: ", error);
     return {code:"Error", message:error.message};
   });
 }

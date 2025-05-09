@@ -7,6 +7,8 @@ import { useColorModeValue } from '@/components/ui/color-mode';
 import { changePasswordSchema } from '@/schema/schemas';
 import { typeChangePasswordSchema } from '@/type';
 import { Eye, EyeOff, Save } from 'lucide-react';
+import { changePassword } from '@/services/firebase';
+import { statusToaster } from '@/utils/functions';
 
 interface InputChangePasswordProps{
   label:string;
@@ -17,7 +19,8 @@ interface InputChangePasswordProps{
     currentPassword: string;
     newPassword: string;
     confirmPassword: string;
-  }>
+  }>;
+  disabled:boolean;
 }
 
 interface ButtonShowProps {
@@ -27,7 +30,7 @@ interface ButtonShowProps {
 
 const SettingsPage = () => {
 
-  const { register, handleSubmit, formState: { errors }, } = useForm({
+  const { register, handleSubmit, reset, formState: { errors }, } = useForm({
     resolver: zodResolver(changePasswordSchema),
   });
 
@@ -37,17 +40,18 @@ const SettingsPage = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   
   const onSubmit = (data:typeChangePasswordSchema) => {
-    console.log(data);
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
+    changePassword(data.newPassword).then((res:{code:string, message:string})=>{
       toaster.create({
-        title: "Password updated successfully",
-        type: "success",
-        duration: 3000,
+        title: res.code,
+        description: res.message,
+        type: statusToaster(res.code),
+        duration: 2000
       });
-    }, 3000);
+      setIsLoading(false);
+      if(res.code !== "Error") reset();
+    });
   };
   
   return (
@@ -72,9 +76,9 @@ const SettingsPage = () => {
           <Separator variant="solid" />
 
           <Fieldset.Root>
-            <InputChangePassword label='Current Password' placeholder='Enter your current password' register={register} name='currentPassword' errors={errors} />
-            <InputChangePassword label='New Password' placeholder='Enter your new password' register={register} name='newPassword' errors={errors} />
-            <InputChangePassword label='Confirm New Password' placeholder='Confirm your new password' register={register} name='confirmPassword' errors={errors} />
+            <InputChangePassword label='Current Password' placeholder='Enter your current password' register={register} name='currentPassword' errors={errors} disabled={isLoading} />
+            <InputChangePassword label='New Password' placeholder='Enter your new password' register={register} name='newPassword' errors={errors} disabled={isLoading} />
+            <InputChangePassword label='Confirm New Password' placeholder='Confirm your new password' register={register} name='confirmPassword' errors={errors} disabled={isLoading} />
             
             <HStack justifyContent="flex-end">
               <Button
@@ -96,7 +100,7 @@ const SettingsPage = () => {
   );
 };
 
-function InputChangePassword({label, placeholder, register, name, errors}:InputChangePasswordProps){
+function InputChangePassword({label, placeholder, register, name, disabled, errors}:InputChangePasswordProps){
   const [show, setShow] = useState(false);
   return(
     <Fieldset.Content >
@@ -106,6 +110,7 @@ function InputChangePassword({label, placeholder, register, name, errors}:InputC
           <Input
             type={show ? "text" : "password"}
             placeholder={placeholder}
+            disabled={disabled}
             {...register(name, { required: true })}
           />
         </InputGroup>
