@@ -1,9 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { collection, deleteDoc, doc, getDocs, getFirestore, query, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, DocumentData, getDocs, getFirestore, query, QueryDocumentSnapshot, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
 import { LinkItem } from "@/type";
-
-// import { toaster } from "@/components/ui/toaster";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -27,8 +25,6 @@ export const createUser = async (email:string, password:string):Promise<{code:st
 }
 
 export const signIn = async (email:string, password:string):Promise<{code:string, message:string, user:User | null}> => {
-  // const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  // return userCredential;
   return await signInWithEmailAndPassword(auth, email, password).then((userCredential:UserCredential)=>{
     return {code:"Started", message:"Session started", user:userCredential.user};
   }).catch((error) => { 
@@ -39,11 +35,6 @@ export const signIn = async (email:string, password:string):Promise<{code:string
 export const sign_Out = async () => {
   await signOut(auth);
 }
-
-// export const getUser = async () => {
-//   const user = auth.currentUser;
-//   return user;
-// }
 
 export const addLinkFirebase = async (email:string, link:LinkItem):Promise<{code:string, message:string}> => {
   const domain = window.location.hostname;
@@ -58,7 +49,7 @@ export const addLinkFirebase = async (email:string, link:LinkItem):Promise<{code
 export const getLinks = async (email:string | null):Promise<{code:string, message:string, links:LinkItem[]}> => {
   if(!email) return {code:"Error", message:"No user found", links:[]};
   const links = await getDocs(query(collection(db, email)));
-  return {code:"Success", message:"Data retrieved successfully", links:links.docs.map((doc:any)=>doc.data())};
+  return {code:"Success", message:"Data retrieved successfully", links:links.docs.map((doc:QueryDocumentSnapshot<DocumentData, DocumentData>)=>doc.data()) as LinkItem[]}; 
 }
 
 export const deleteLink = async (email:string | null, id:string):Promise<{code:string, message:string}> => {

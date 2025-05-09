@@ -38,7 +38,6 @@ function Login() {
     toaster.create({
       title: user.code,
       description: user.message,
-      status: statusToaster(user.code),
       duration: 5000,
       type: statusToaster(user.code),
     });

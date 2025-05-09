@@ -12,8 +12,12 @@ interface InputChangePasswordProps{
   label:string;
   placeholder:string;
   register:UseFormRegister<typeChangePasswordSchema>;
-  name:string;
-  errors:FieldErrors
+  name:'currentPassword' | 'newPassword' | 'confirmPassword';
+  errors:FieldErrors<{
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }>
 }
 
 interface ButtonShowProps {

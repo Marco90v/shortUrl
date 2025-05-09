@@ -1,5 +1,4 @@
 import { Box, Flex, Text, IconButton, Button, Stack, useDisclosure, Collapsible, Link as L} from '@chakra-ui/react';
-// import { Link as RouterLink } from 'react-router-dom';
 import { Menu, X, Link, Settings, House } from 'lucide-react';
 import { useColorModeValue } from './ui/color-mode'
 import { sign_Out } from '@/services/firebase';
@@ -120,27 +119,11 @@ const Navbar = () => {
           justify={'flex-end'}
           direction={'row'}
           gap={6}
-        >
-          {/* <Button
-            // as={RouterLink}
-            // to="/settings"
-            fontSize={'sm'}
-            fontWeight={400}
-            variant={'ghost'}
-            // leftIcon={<Settings size={16} />}
-          >
-            Settings
-          </Button> */}
-          
+        >          
           <ButtonSignOut />
         </Stack>
       </Flex>
-
-      {/* <Collapse in={open} animateOpacity>
-        <MobileNav />
-      </Collapse> */}
       <Collapsible.Root open={open}>
-        {/* <Collapsible.Trigger>Toggle Collapsible</Collapsible.Trigger> */}
         <Collapsible.Content>
           <MobileNav />
         </Collapsible.Content>

@@ -1,5 +1,5 @@
 import { Box, Table, Badge, Menu, Text, Flex, Input, InputGroup, HStack, Button, Portal, Link, Clipboard } from '@chakra-ui/react';
-import { MoreVertical, Copy, Pencil, Trash2, Search, ExternalLink } from 'lucide-react';
+import { MoreVertical, Copy, Trash2, Search, ExternalLink } from 'lucide-react';
 import { useEffect } from 'react';
 import { toaster } from "@/components/ui/toaster";
 import { useColorModeValue } from './ui/color-mode';
@@ -12,54 +12,6 @@ import { useShallow } from 'zustand/shallow';
 import { deleteLink, getLinks } from '@/services/firebase';
 import { useLinksStore } from '@/store/links';
 import { statusToaster } from '@/utils/functions';
-
-// interface LinkItem {
-//   id: string,
-//   originalUrl: string,
-//   shortUrl: string,
-//   createdAt: string,
-//   clicks: number,
-//   alias?: string,
-// }
-
-// Sample data for the design
-// const SAMPLE_LINKS: LinkItem[] = [
-//   {
-//     id: '1',
-//     originalUrl: 'https://www.verylongwebsitename.com/some/extremely/long/path/to/article/about/technology',
-//     shortUrl: 'shrt.ly/tech1',
-//     createdAt: '2023-05-15',
-//     clicks: 1245
-//   },
-//   {
-//     id: '2',
-//     originalUrl: 'https://www.example.com/blog/how-to-create-short-urls',
-//     shortUrl: 'shrt.ly/blog',
-//     createdAt: '2023-06-22',
-//     clicks: 873
-//   },
-//   {
-//     id: '3',
-//     originalUrl: 'https://www.longwebsiteaddress.com/products/special-offer',
-//     shortUrl: 'shrt.ly/offer',
-//     createdAt: '2023-07-10',
-//     clicks: 2184
-//   },
-//   {
-//     id: '4',
-//     originalUrl: 'https://www.example.org/documentation/advanced-features',
-//     shortUrl: 'shrt.ly/docs',
-//     createdAt: '2023-08-05',
-//     clicks: 642
-//   },
-//   {
-//     id: '5',
-//     originalUrl: 'https://www.examplecompany.co/contact/customer-support',
-//     shortUrl: 'shrt.ly/help',
-//     createdAt: '2023-09-18',
-//     clicks: 397
-//   }
-// ];
 
 const domain = window.location.hostname;
 
@@ -108,12 +60,7 @@ const LinksList = () => {
     }
   };
 
-  // const handlerEditLink = (id:string) => {
-  //   console.log(id);
-  // }
-
   const handlerDeleteLink = (id:string) => {
-    // console.log(id);
     if(user?.email){
       deleteLink(user?.email, id).then((res:{code:string, message:string})=>{
         toaster.create({
@@ -122,7 +69,6 @@ const LinksList = () => {
           type: statusToaster(res.code),
           duration: 2000
         });
-        // setLinks(links.filter((link:LinkItem)=>link.id !== id));
         removeLink(id);
       });
     }
@@ -223,10 +169,6 @@ const LinksList = () => {
                               </Menu.Item>
                             </Clipboard.Trigger>
                           </Clipboard.Root>
-                          {/* <Menu.Item value="edit" cursor="pointer" onClick={() => handlerEditLink(link.id)}>
-                              <Pencil size={16} />
-                              Edit
-                          </Menu.Item> */}
                           <Menu.Item value="delete" color="red.500" _hover={{ bg: "red.50" }} cursor="pointer" onClick={() => handlerDeleteLink(link.id)}>
                               <Trash2 size={16} />
                               Delete

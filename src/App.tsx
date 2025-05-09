@@ -26,15 +26,6 @@ function ProtecterRoutes({rutesProtecter}:typeProtecterRoutes){
   return !user ? <Navigate to="/" replace /> : <Outlet />
 }
 
-// function ValidateUser(){
-//   const {user} = useAuthStore(
-//     useShallow( (state => ({
-//       user: state.user,
-//     })))
-//   )
-//   return !user ? <Outlet /> : <Navigate to="/dashboard" replace />
-// }
-
 function App() {
   return (
     <Suspense fallback={<Loading />}>
