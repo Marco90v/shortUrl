@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { collection, doc, getDocs, getFirestore, query, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, getFirestore, query, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
 import { LinkItem } from "@/type";
 
@@ -55,17 +55,18 @@ export const addLinkFirebase = async (email:string, link:LinkItem):Promise<{code
   });
 }
 
-export const getData = async (email:string | null):Promise<{code:string, message:string, links:LinkItem[]}> => {
+export const getLinks = async (email:string | null):Promise<{code:string, message:string, links:LinkItem[]}> => {
   if(!email) return {code:"Error", message:"No user found", links:[]};
   const links = await getDocs(query(collection(db, email)));
   return {code:"Success", message:"Data retrieved successfully", links:links.docs.map((doc:any)=>doc.data())};
 }
 
-// export const deleteLink = async (email:string, id:string):Promise<{code:string, message:string}> => {
-//   return await deleteDoc(doc(db, email, id)).then(() => {
-//     return {code:"Link deleted successfully!", message:"Your link has been deleted."};
-//   }).catch((error) => {
-//     console.error("Error deleting document: ", error);
-//     return {code:"Error", message:error.message};
-//   });
-// }
+export const deleteLink = async (email:string | null, id:string):Promise<{code:string, message:string}> => {
+  if(!email) return {code:"Error", message:"No user found"};
+  return await deleteDoc(doc(db, email, id)).then(() => {
+    return {code:"Link deleted successfully!", message:"Your link has been deleted."};
+  }).catch((error) => {
+    console.error("Error deleting document: ", error);
+    return {code:"Error", message:error.message};
+  });
+}

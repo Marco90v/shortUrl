@@ -9,8 +9,9 @@ import { searchSchema } from '@/schema/schemas';
 import { LinkItem } from '@/type';
 import { useAuthStore } from '@/store/auth';
 import { useShallow } from 'zustand/shallow';
-import { getData } from '@/services/firebase';
+import { deleteLink, getLinks } from '@/services/firebase';
 import { useLinksStore } from '@/store/links';
+import { statusToaster } from '@/utils/functions';
 
 // interface LinkItem {
 //   id: string,
@@ -69,10 +70,11 @@ const LinksList = () => {
       user: state.user,
     })))
   );
-  const {links, setLinks} = useLinksStore(
+  const {links, setLinks, removeLink} = useLinksStore(
     useShallow( (state => ({
       links: state.links,
       setLinks: state.setLinks,
+      removeLink: state.removeLink,
     })))
   );
 
@@ -89,7 +91,7 @@ const LinksList = () => {
 
   useEffect(() => {
     if(user?.email){
-      getData(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
+      getLinks(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
         setLinks(res.links);
       });
     }
@@ -106,12 +108,24 @@ const LinksList = () => {
     }
   };
 
-  const handlerEditLink = (id:string) => {
-    console.log(id);
-  }
+  // const handlerEditLink = (id:string) => {
+  //   console.log(id);
+  // }
 
   const handlerDeleteLink = (id:string) => {
-    console.log(id);
+    // console.log(id);
+    if(user?.email){
+      deleteLink(user?.email, id).then((res:{code:string, message:string})=>{
+        toaster.create({
+          title: res.code,
+          description: res.message,
+          type: statusToaster(res.code),
+          duration: 2000
+        });
+        // setLinks(links.filter((link:LinkItem)=>link.id !== id));
+        removeLink(id);
+      });
+    }
   }
 
   const filteredLinks = links.filter(link => {
@@ -209,10 +223,10 @@ const LinksList = () => {
                               </Menu.Item>
                             </Clipboard.Trigger>
                           </Clipboard.Root>
-                          <Menu.Item value="edit" cursor="pointer" onClick={() => handlerEditLink(link.id)}>
+                          {/* <Menu.Item value="edit" cursor="pointer" onClick={() => handlerEditLink(link.id)}>
                               <Pencil size={16} />
                               Edit
-                          </Menu.Item>
+                          </Menu.Item> */}
                           <Menu.Item value="delete" color="red.500" _hover={{ bg: "red.50" }} cursor="pointer" onClick={() => handlerDeleteLink(link.id)}>
                               <Trash2 size={16} />
                               Delete

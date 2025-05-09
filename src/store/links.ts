@@ -18,6 +18,7 @@ interface LinksState {
   links:LinkItem[];
   setLinks: (link:LinkItem[]) => void;
   addLink: (link:LinkItem) => void;
+  removeLink: (id:string) => void;
 }
 
 export const useLinksStore = create<LinksState>()(
@@ -25,7 +26,8 @@ export const useLinksStore = create<LinksState>()(
     (set) => ({
       links: [],
       setLinks: (links) => set((state) => ({ ...state, links })),
-      addLink: (link) => set((state) => ({ ...state, links: [...state.links, link] })),     
+      addLink: (link) => set((state) => ({ ...state, links: [...state.links, link] })),
+      removeLink: (id) => set((state) => ({ ...state, links: state.links.filter((link:LinkItem)=>link.id !== id) })),
     }),
     { name: 'linksStore' },
   ),
