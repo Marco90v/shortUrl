@@ -1,6 +1,6 @@
 import { Box, Table, Badge, Menu, Text, Flex, Input, InputGroup, HStack, Button, Portal, Link, Clipboard } from '@chakra-ui/react';
 import { MoreVertical, Copy, Trash2, Search, ExternalLink } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { toaster } from "@/components/ui/toaster";
 import { useColorModeValue } from './ui/color-mode';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,7 +37,8 @@ const LinksList = () => {
     },
   });
 
-  const watchSearch = watch("search");
+  const watchSearch = watch('search')?.toLowerCase() ?? '';
+
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
@@ -47,7 +48,8 @@ const LinksList = () => {
         setLinks(res.links);
       });
     }
-  }, [links.length, setLinks, user?.email]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCopyLink = (copied:boolean, shortUrl: string) => {
     if(copied){
@@ -74,10 +76,13 @@ const LinksList = () => {
     }
   }
 
-  const filteredLinks = links.filter(link => {
-    return link.originalUrl.toLowerCase().includes(watchSearch.toLowerCase()) ||
-    link.shortUrl.toLowerCase().includes(watchSearch.toLowerCase())
-    }
+  const filteredLinks = useMemo(
+    () =>
+      links.filter(item =>
+        item.originalUrl.toLowerCase().includes(watchSearch) ||
+        item.shortUrl.toLowerCase().includes(watchSearch)
+      ),
+    [links, watchSearch]
   );
 
   return (
