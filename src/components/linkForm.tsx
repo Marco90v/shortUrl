@@ -21,8 +21,11 @@ interface InputUrlProps{
   isLoading:boolean;
   isSuccess:boolean;
   register:UseFormRegister<typeLinkSchema>;
-  name:string;
-  errors:FieldErrors;
+  name:"alias"|"url";
+  errors:FieldErrors<{
+    url: string;
+    alias?: string | undefined;
+  }>;
   type:'url'|'text';
 }
 
@@ -71,7 +74,6 @@ const LinkForm = () => {
       toaster.create({
         title: rest.code,
         description: rest.message,
-        status: statusToaster(rest.code),
         type: statusToaster(rest.code),
         duration: 2000
       });
@@ -150,7 +152,7 @@ const LinkForm = () => {
 function InputUlr({label, required, type, placeholder, isLoading, isSuccess, register, name, errors}:InputUrlProps){
   return(
     <Fieldset.Content>
-      <Field.Root size="lg" maxW="100%" required={required}>
+      <Field.Root maxW="100%" required={required}>
         <Field.Label>
           {label} <Field.RequiredIndicator />
         </Field.Label>

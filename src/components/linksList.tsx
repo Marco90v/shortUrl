@@ -102,8 +102,6 @@ const LinksList = () => {
         description: `${domain}/${shortUrl} has been copied to clipboard.`,
         type: "success",
         duration: 2000,
-        position: "top",
-        isClosable: true,
       })
     }
   };
