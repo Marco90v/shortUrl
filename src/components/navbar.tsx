@@ -33,8 +33,6 @@ const ButtonSignOut = () => {
   }
   return(
     <Button
-      // as={RouterLink}
-      // to="/"
       display={{ base: 'none', md: 'inline-flex' }} 
       fontSize={'sm'}
       fontWeight={600}
@@ -83,9 +81,7 @@ const Navbar = () => {
         </Flex>
         
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Flex 
-            // as={RouterLink} 
-            // to="/dashboard"
+          <Flex
             alignItems="center"
             _hover={{ textDecoration: 'none' }}
           >
@@ -180,9 +176,6 @@ const MobileNav = () => {
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
       <Button
-        // as={RouterLink}
-        // to="/"
-        // display={{ base: 'none', md: 'inline-flex' }} 
         fontSize={'sm'}
         fontWeight={600}
         color={'white'}
@@ -198,13 +191,10 @@ const MobileNav = () => {
 };
 
 const MobileNavItem = ({ label,icon, href }: { label: string; icon:React.JSX.Element; href: string }) => {
-  // console.log(href)
   return (
     <Stack gap={4}>
       <Box
         py={2}
-        // as={RouterLink}
-        // to={href ?? '#'}
         justifyContent="space-between"
         alignItems="center"
         _hover={{
