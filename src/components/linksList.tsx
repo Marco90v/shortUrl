@@ -45,6 +45,7 @@ const LinksList = () => {
   useEffect(() => {
     if(user?.email){
       getLinks(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
+        console.log(res);
         setLinks(res.links);
       });
     }
@@ -120,6 +121,7 @@ const LinksList = () => {
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader fontWeight={'semibold'} color={'gray.500'}>Original URL</Table.ColumnHeader>
+              <Table.ColumnHeader fontWeight={'semibold'} color={'gray.500'}>Alias</Table.ColumnHeader>
               <Table.ColumnHeader fontWeight={'semibold'} color={'gray.500'}>Short URL</Table.ColumnHeader>
               <Table.ColumnHeader fontWeight={'semibold'} color={'gray.500'}>Created</Table.ColumnHeader>
               <Table.ColumnHeader fontWeight={'semibold'} color={'gray.500'}>Clicks</Table.ColumnHeader>
@@ -140,6 +142,9 @@ const LinksList = () => {
                       <ExternalLink size={14} />
                     </Link>
                   </HStack>
+                </Table.Cell>
+                <Table.Cell fontWeight="medium" color={link.alias === "" ? "gray.300": "black"}>
+                  {link.alias !== "" ? link.alias : "(void)" }
                 </Table.Cell>
                 <Table.Cell fontWeight="medium" color="brand.500">
                   {domain}/{link.shortUrl}
