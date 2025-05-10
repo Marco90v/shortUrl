@@ -4,6 +4,7 @@ import { useColorModeValue } from './ui/color-mode'
 import { sign_Out } from '@/services/firebase';
 import { useAuthStore } from '@/store/auth';
 import { useShallow } from 'zustand/shallow';
+import { useLinksStore } from '@/store/links';
 
 const NAV_ITEMS = [
   {
@@ -27,6 +28,8 @@ const ButtonSignOut = () => {
   const signOut = () => {
     sign_Out();
     setUser(null);
+    useLinksStore.persist.clearStorage();
+    useAuthStore.persist.clearStorage();
   }
   return(
     <Button
