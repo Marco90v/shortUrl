@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { collection, deleteDoc, doc, DocumentData, getDocs, getFirestore, query, QueryDocumentSnapshot, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, DocumentData, getDoc, getDocs, getFirestore, query, QueryDocumentSnapshot, setDoc, updateDoc, where } from "firebase/firestore";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updatePassword, User, UserCredential } from "firebase/auth";
 import { LinkItem } from "@/type";
 
@@ -38,8 +38,17 @@ export const sign_Out = async () => {
 
 export const addLinkFirebase = async (email:string, link:LinkItem):Promise<{code:string, message:string}> => {
   const domain = window.location.hostname;
-  return await setDoc(doc(db, email, link.id), link).then(() => {
-    return {code:"Link shortened successfully!", message:`Your new short URL: ${domain}/${link.shortUrl}`};
+  if(!email) return {code:"Error", message:"No user found"};
+  if(!link) return {code:"Error", message:"No link found"};
+  return await setDoc(doc(db, email, link.id), link).then(async () => {
+    return await setDoc(doc(db, "links", link.shortUrl), 
+      {clicks:0, originalUrl:link.originalUrl}
+    ).then(() => {
+      return {code:"Link shortened successfully!", message:`Your new short URL: ${domain}/${link.shortUrl}`};
+    }).catch((error) => {
+      console.error("Error adding document: ", error);
+      return {code:"Error", message:error.message};
+    });
   }).catch((error) => {
     console.error("Error adding document: ", error);
     return {code:"Error", message:error.message};
@@ -52,10 +61,15 @@ export const getLinks = async (email:string | null):Promise<{code:string, messag
   return {code:"Success", message:"Data retrieved successfully", links:links.docs.map((doc:QueryDocumentSnapshot<DocumentData, DocumentData>)=>doc.data()) as LinkItem[]}; 
 }
 
-export const deleteLink = async (email:string | null, id:string):Promise<{code:string, message:string}> => {
+export const deleteLink = async (email:string | null, id:string, shortUrl:string):Promise<{code:string, message:string}> => {
   if(!email) return {code:"Error", message:"No user found"};
-  return await deleteDoc(doc(db, email, id)).then(() => {
-    return {code:"Link deleted successfully!", message:"Your link has been deleted."};
+  return await deleteDoc(doc(db, email, id)).then(async() => {
+    return await deleteDoc(doc(db, "links", shortUrl)).then(() => {
+      return {code:"Link deleted successfully!", message:"Your link has been deleted."};
+    }).catch((error) => {
+      console.error("Error deleting document: ", error);
+      return {code:"Error", message:error.message};
+    });
   }).catch((error) => {
     console.error("Error deleting document: ", error);
     return {code:"Error", message:error.message};
@@ -71,4 +85,19 @@ export const changePassword = async (newPassword:string):Promise<{code:string, m
     console.error("Error updating password: ", error);
     return {code:"Error", message:error.message};
   });
+}
+
+export const getOriginalLink = async (shortURL:string):Promise<{linkOriginal:string|null}> => {
+  if(!shortURL) return {linkOriginal:null};
+  const linkOriginal = await getDoc(doc(db, "links", shortURL));
+  if (linkOriginal.exists()) {
+    return await updateDoc(doc(db, "links", shortURL), { clicks: linkOriginal.data().clicks + 1 }).then(() => {
+      return {linkOriginal:linkOriginal.data().originalUrl};
+    }).catch((error) => {
+      console.error("Error updating document: ", error);
+      return {linkOriginal:null}
+    });
+  }
+  console.error("Error getting document");
+  return {linkOriginal:null};
 }

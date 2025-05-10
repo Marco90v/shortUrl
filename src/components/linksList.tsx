@@ -45,7 +45,7 @@ const LinksList = () => {
   useEffect(() => {
     if(user?.email){
       getLinks(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
-        console.log(res);
+        // console.log(res);
         setLinks(res.links);
       });
     }
@@ -63,9 +63,10 @@ const LinksList = () => {
     }
   };
 
-  const handlerDeleteLink = (id:string) => {
+  const handlerDeleteLink = (id:string, shortUrl:string) => {
+    // console.log("handlerDeleteLink", id, shortUrl);
     if(user?.email){
-      deleteLink(user?.email, id).then((res:{code:string, message:string})=>{
+      deleteLink(user?.email, id, shortUrl).then((res:{code:string, message:string})=>{
         toaster.create({
           title: res.code,
           description: res.message,
@@ -179,7 +180,7 @@ const LinksList = () => {
                               </Menu.Item>
                             </Clipboard.Trigger>
                           </Clipboard.Root>
-                          <Menu.Item value="delete" color="red.500" _hover={{ bg: "red.50" }} cursor="pointer" onClick={() => handlerDeleteLink(link.id)}>
+                          <Menu.Item value="delete" color="red.500" _hover={{ bg: "red.50" }} cursor="pointer" onClick={() => handlerDeleteLink(link.id, link.shortUrl)}>
                               <Trash2 size={16} />
                               Delete
                           </Menu.Item>

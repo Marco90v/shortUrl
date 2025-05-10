@@ -66,7 +66,7 @@ const LinkForm = () => {
       shortUrl: short,
       createdAt: currentDate,
       clicks: 0,
-      alias: data.alias,
+      alias: data.alias ?? "",
     };
 
     if(user?.email){
