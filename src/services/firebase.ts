@@ -36,19 +36,11 @@ export const sign_Out = async () => {
   await signOut(auth);
 }
 
-export const addLinkFirebase = async (email:string, link:LinkItem):Promise<{code:string, message:string}> => {
+export const addLinkFirebase = async (link:LinkItem):Promise<{code:string, message:string}> => {
   const domain = window.location.hostname;
-  if(!email) return {code:"Error", message:"No user found"};
   if(!link) return {code:"Error", message:"No link found"};
-  return await setDoc(doc(db, email, link.id), link).then(async () => {
-    return await setDoc(doc(db, "links", link.shortUrl), 
-      {clicks:0, originalUrl:link.originalUrl}
-    ).then(() => {
-      return {code:"Link shortened successfully!", message:`Your new short URL: ${domain}/${link.shortUrl}`};
-    }).catch((error) => {
-      console.error("Error adding document: ", error);
-      return {code:"Error", message:error.message};
-    });
+  return await setDoc(doc(db, "links", link.shortUrl), link).then(() => {
+    return {code:"Link shortened successfully!", message:`Your new short URL: ${domain}/${link.shortUrl}`};
   }).catch((error) => {
     console.error("Error adding document: ", error);
     return {code:"Error", message:error.message};
@@ -57,19 +49,24 @@ export const addLinkFirebase = async (email:string, link:LinkItem):Promise<{code
 
 export const getLinks = async (email:string | null):Promise<{code:string, message:string, links:LinkItem[]}> => {
   if(!email) return {code:"Error", message:"No user found", links:[]};
-  const links = await getDocs(query(collection(db, email)));
+  const links = await getDocs(query(collection(db, "links"), where("email", "==", email) ));
   return {code:"Success", message:"Data retrieved successfully", links:links.docs.map((doc:QueryDocumentSnapshot<DocumentData, DocumentData>)=>doc.data()) as LinkItem[]}; 
 }
 
-export const deleteLink = async (email:string | null, id:string, shortUrl:string):Promise<{code:string, message:string}> => {
+export const getClicks = async (shortUrl:string):Promise<{clicks:number}> => {
+  if(!shortUrl) return {clicks:0};
+  const link = await getDoc(doc(db, "links", shortUrl));
+  if (link.exists()) {
+    return {clicks:link.data().clicks};
+  }
+  console.error("Error getting document");
+  return {clicks:0};
+}
+
+export const deleteLink = async (email:string | null, shortUrl:string):Promise<{code:string, message:string}> => {
   if(!email) return {code:"Error", message:"No user found"};
-  return await deleteDoc(doc(db, email, id)).then(async() => {
-    return await deleteDoc(doc(db, "links", shortUrl)).then(() => {
-      return {code:"Link deleted successfully!", message:"Your link has been deleted."};
-    }).catch((error) => {
-      console.error("Error deleting document: ", error);
-      return {code:"Error", message:error.message};
-    });
+  return await deleteDoc(doc(db, "links", shortUrl)).then(() => {
+    return {code:"Link deleted successfully!", message:"Your link has been deleted."};
   }).catch((error) => {
     console.error("Error deleting document: ", error);
     return {code:"Error", message:error.message};

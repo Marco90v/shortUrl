@@ -53,38 +53,41 @@ const LinkForm = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
-  const onSubmit = async (data:typeLinkSchema) => {    
-    setIsLoading(true);
-
-    const currentDate = new Date().toJSON().slice(0, 10);
-    const short = shortenUrl();
-    const ID = crypto.randomUUID();
-
-    const newLink:LinkItem = {
-      id: ID,
-      originalUrl: data.url,
-      shortUrl: short,
-      createdAt: currentDate,
-      clicks: 0,
-      alias: data.alias ?? "",
-    };
-
+  const onSubmit = async (data:typeLinkSchema) => {
     if(user?.email){
-      const rest = await addLinkFirebase(user.email, newLink);
-      toaster.create({
-        title: rest.code,
-        description: rest.message,
-        type: statusToaster(rest.code),
-        duration: 2000
-      });
-      setIsLoading(false);
-      if(rest.code !== 'Error'){
-        addLink(newLink);
-        setIsSuccess(true);
-        setTimeout(() => {
-          setIsSuccess(false);
-        }, 2000);
-        reset();
+      setIsLoading(true);
+
+      const currentDate = new Date().toJSON().slice(0, 10);
+      const short = shortenUrl();
+      const ID = crypto.randomUUID();
+
+      const newLink:LinkItem = {
+        id: ID,
+        email: user.email,
+        originalUrl: data.url,
+        shortUrl: short,
+        createdAt: currentDate,
+        clicks: 0,
+        alias: data.alias ?? "",
+      };
+
+      if(user?.email){
+        const rest = await addLinkFirebase(newLink);
+        toaster.create({
+          title: rest.code,
+          description: rest.message,
+          type: statusToaster(rest.code),
+          duration: 2000
+        });
+        setIsLoading(false);
+        if(rest.code !== 'Error'){
+          addLink(newLink);
+          setIsSuccess(true);
+          setTimeout(() => {
+            setIsSuccess(false);
+          }, 2000);
+          reset();
+        }
       }
     }
   };

@@ -12,6 +12,7 @@ export type typeChangePasswordSchema = z.infer<typeof changePasswordSchema>;
 
 export interface LinkItem {
   id: string,
+  email: string,
   originalUrl: string,
   shortUrl: string,
   createdAt: string,

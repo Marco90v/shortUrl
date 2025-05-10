@@ -45,9 +45,8 @@ const LinksList = () => {
   useEffect(() => {
     if(user?.email){
       getLinks(user?.email).then((res:{code:string, message:string, links:LinkItem[]})=>{
-        // console.log(res);
         setLinks(res.links);
-      });
+    });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -64,9 +63,8 @@ const LinksList = () => {
   };
 
   const handlerDeleteLink = (id:string, shortUrl:string) => {
-    // console.log("handlerDeleteLink", id, shortUrl);
     if(user?.email){
-      deleteLink(user?.email, id, shortUrl).then((res:{code:string, message:string})=>{
+      deleteLink(user.email, shortUrl).then((res:{code:string, message:string})=>{
         toaster.create({
           title: res.code,
           description: res.message,
