@@ -54,14 +54,14 @@ function Login() {
   const boxShadow = useColorModeValue('lg', 'dark-lg');
 
   return (
-    <Container maxW="100vw" h="100vh" p={0} centerContent>
+    <Container maxW="100vw" h="100vh" p={0} bg="gray.50" centerContent>
       <VStack
-        wordSpacing={8}
+        gap={8}
         w={{ base: "90%", md: "450px" }}
         justify="center"
         h="100%"
       >
-        <VStack wordSpacing={2} mb={4} alignItems="center" >
+        <VStack gap={2} mb={4} alignItems="center" >
           <Box
            as="span" 
            display="inline-flex" 
