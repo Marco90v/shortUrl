@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react-swc'
 import compression from 'vite-plugin-compression'
 import inspect from 'vite-plugin-inspect'
 import { resolve } from 'path'
+import netlifyPlugin from "@netlify/vite-plugin-react-router";
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -13,6 +14,7 @@ export default defineConfig({
       tsDecorators: true,
       jsxImportSource: '@emotion/react',
     }),
+    netlifyPlugin(),
     isProd &&
       compression({
         algorithm: 'gzip',
