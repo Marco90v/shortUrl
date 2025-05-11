@@ -1,4 +1,4 @@
-import { Box, Button, Container, Heading, Text, VStack, Input, Fieldset, Field} from "@chakra-ui/react";
+import { Box, Container, Heading, Text, VStack, Input, Fieldset, Field } from "@chakra-ui/react";
 import { Link as L } from "@chakra-ui/react"
 import { Link } from 'lucide-react';
 import { useForm } from "react-hook-form";
@@ -6,13 +6,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from "@/schema/schemas";
 import { typeLoginSchema } from "@/type";
 import { useColorModeValue } from "@/components/ui/color-mode";
-import Password from "@/components/password";
 import { toaster, Toaster } from "@/components/ui/toaster";
 import { signIn } from "@/services/firebase";
 import { useAuthStore } from "@/store/auth";
 import { useShallow } from "zustand/shallow";
 import { useNavigate } from "react-router";
 import { statusToaster } from "@/utils/functions";
+import { InputPassword } from "@/components/inputPassword";
+import { useState } from "react";
+import ButtonLR from "@/components/buttonLoginRegister";
+import { INPUT_EMAIL } from "@/utils/const";
 
 function Login() {
 
@@ -26,21 +29,25 @@ function Login() {
     resolver: zodResolver(loginSchema),
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const onSubmit = async (data:typeLoginSchema) => {
+    setIsLoading(true);
     const user = await signIn(data.email, data.password);
+    setIsLoading(false);
     if(user.user){
+      reset();
       setUser(user.user);
       navigate("/dashboard");
+      toaster.create({
+        title: user.code,
+        description: user.message,
+        duration: 5000,
+        type: statusToaster(user.code),
+      });
     }
-    if(user.code === "Started")reset();
-    toaster.create({
-      title: user.code,
-      description: user.message,
-      duration: 5000,
-      type: statusToaster(user.code),
-    });
   }
 
   const bgColor = useColorModeValue('white', 'gray.800');
@@ -90,30 +97,18 @@ function Login() {
           <VStack wordSpacing={4} align="flex-start" w="100%">
             <Fieldset.Root size="lg" maxW="100%">
               <Fieldset.Content>
-                <Field.Root invalid={!!errors.email}>
-                  <Field.Label>Email</Field.Label>
+                <Field.Root invalid={!!errors.email} required>
+                  <Field.Label>Email <Field.RequiredIndicator /></Field.Label>
                   <Input
-                    type="email"
-                    placeholder="your@email.com"
-                    size="lg"
-                    borderRadius="md"
+                    {...INPUT_EMAIL}
+                    disabled={isLoading}
                     {...register("email", { required: true })}
                   />
                   <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
                 </Field.Root>
-
-                <Password register={register} name="password" label="Password" error={errors.password} />
-
+                <InputPassword placeholder="Enter your password" name="password" label="Password" disabled={isLoading} error={errors.password} register={register} />
               </Fieldset.Content>
-
-              <Button type="submit"
-                bg="brand.500"
-                w="100%" 
-                size="lg"
-                mt={4}
-              >
-                Sign In
-              </Button>
+              <ButtonLR label="Sign In" bg="brand.500" isLoading={isLoading} />
             </Fieldset.Root>
           </VStack>
         </Box>

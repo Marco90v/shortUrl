@@ -19,7 +19,7 @@ const NAV_ITEMS = [
   }
 ];
 
-const ButtonSignOut = () => {
+const ButtonSignOut = ({md, base}:{md:string, base:string}) => {
   const {setUser} = useAuthStore(
     useShallow( (state => ({
       setUser: state.setUser,
@@ -33,7 +33,7 @@ const ButtonSignOut = () => {
   }
   return(
     <Button
-      display={{ base: 'none', md: 'inline-flex' }} 
+      display={{ base, md }} 
       fontSize={'sm'}
       fontWeight={600}
       color={'white'}
@@ -119,7 +119,7 @@ const Navbar = () => {
           direction={'row'}
           gap={6}
         >          
-          <ButtonSignOut />
+          <ButtonSignOut base='none' md='inline-flex' />
         </Stack>
       </Flex>
       <Collapsible.Root open={open}>
@@ -175,17 +175,7 @@ const MobileNav = () => {
       {NAV_ITEMS.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
-      <Button
-        fontSize={'sm'}
-        fontWeight={600}
-        color={'white'}
-        bg={'red.400'}
-        _hover={{
-          bg: 'red.500',
-        }}
-      >
-        Sign Out
-      </Button>
+      <ButtonSignOut md='none' base='inline-flex' />
     </Stack>
   );
 };

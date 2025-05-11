@@ -1,4 +1,4 @@
-import { Box, Button, Container, Heading, Text, VStack, Input, Fieldset, Field} from "@chakra-ui/react";
+import { Box, Container, Heading, Text, VStack, Input, Fieldset, Field} from "@chakra-ui/react";
 import { Link as L } from "@chakra-ui/react"
 import { Link } from 'lucide-react';
 import { useForm } from "react-hook-form";
@@ -6,19 +6,28 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from "@/schema/schemas";
 import { typeRegisterSchema } from "@/type";
 import { useColorModeValue } from "@/components/ui/color-mode";
-import Password from "@/components/password";
 import { createUser } from "@/services/firebase";
 import { toaster, Toaster } from "@/components/ui/toaster";
+import { InputPassword } from "@/components/inputPassword";
+import { useState } from "react";
+import ButtonLR from "@/components/buttonLoginRegister";
+import { INPUT_EMAIL } from "@/utils/const";
 
 function Register() {
 
   const { register, handleSubmit, reset, formState: { errors }, } = useForm({
     resolver: zodResolver(registerSchema),
   });
+
+  const [isLoading, setIsLoading] = useState(false);
   
   const onSubmit = async (data:typeRegisterSchema) => {
+    setIsLoading(true);
     const user = await createUser(data.email, data.password);
-    if(user.code === "Create")reset();
+    setIsLoading(false);
+    if(user.code === "Create"){
+      reset();
+    }
     toaster.create({
       title: user.code,
       description: user.message,
@@ -75,32 +84,19 @@ function Register() {
           <VStack wordSpacing={4} align="flex-start" w="100%">
             <Fieldset.Root size="lg" maxW="100%">
               <Fieldset.Content>
-                <Field.Root invalid={!!errors.email}>
-                  <Field.Label>Email</Field.Label>
+                <Field.Root invalid={!!errors.email} required>
+                  <Field.Label>Email <Field.RequiredIndicator /></Field.Label>
                   <Input
-                    type="email"
-                    placeholder="your@email.com"
-                    size="lg"
-                    borderRadius="md"
+                    {...INPUT_EMAIL}
+                    disabled={isLoading}
                     {...register("email", { required: true })}
                   />
                   <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
                 </Field.Root>
-
-                <Password register={register} name="password" label="Password" error={errors.password} />
-
-                <Password register={register} name="confirm" label="Confirm" error={errors.confirm} />
-
+                <InputPassword placeholder="Enter your password" name="password" label="Password" disabled={isLoading} error={errors.password} register={register} />
+                <InputPassword placeholder="Confirm your password" name="confirm" label="Confirm" disabled={isLoading} error={errors.confirm} register={register} />
               </Fieldset.Content>
-
-              <Button type="submit"
-                bg="green.500"
-                w="100%" 
-                size="lg"
-                mt={4}
-              >
-                Create
-              </Button>
+              <ButtonLR label="Create" bg="green.500" isLoading={isLoading} />
             </Fieldset.Root>
           </VStack>
         </Box>
