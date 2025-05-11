@@ -8,7 +8,7 @@ function Dashboard () {
   return (
     <Box minH="100vh" bg="gray.50">
       <Navbar />
-      <Container maxW="container.xl" py={8}>
+      <Container py={8}>
         <Outlet />
       </Container>
       <Toaster />

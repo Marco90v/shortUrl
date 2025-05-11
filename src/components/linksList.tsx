@@ -2,7 +2,6 @@ import { Box, Table, Badge, Menu, Text, Flex, Input, InputGroup, HStack, Button,
 import { MoreVertical, Copy, Trash2, Search, ExternalLink } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { toaster } from "@/components/ui/toaster";
-import { useColorModeValue } from './ui/color-mode';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { searchSchema } from '@/schema/schemas';
@@ -38,9 +37,6 @@ const LinksList = () => {
   });
 
   const watchSearch = watch('search')?.toLowerCase() ?? '';
-
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   useEffect(() => {
     if(user?.email){
@@ -90,15 +86,15 @@ const LinksList = () => {
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
-      bg={bgColor}
-      borderColor={borderColor}
+      bg="white"
+      borderColor="gray.200"
       boxShadow="sm"
       w="100%"
     >
       <Flex 
         p={4} 
         borderBottomWidth="1px" 
-        borderColor={borderColor}
+        borderColor="gray.200"
         justify="space-between"
         align="center"
         wrap="wrap"

@@ -1,5 +1,4 @@
 import { Flex, SimpleGrid, Stat } from "@chakra-ui/react";
-import { useColorModeValue } from "@/components/ui/color-mode";
 import { BarChart, Link, TrendingUp } from "lucide-react";
 import { useLinksStore } from "@/store/links";
 import { useShallow } from "zustand/shallow";
@@ -27,18 +26,15 @@ function StatBox(){
     })))
   );
 
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-
   return(
     <SimpleGrid columns={{ base: 1, md: 3 }} gap={6} mb={8}>
       {statBoxes.map((stat, index) => (
         <Flex
           key={index}
           p={5}
-          bg={bgColor}
+          bg="white"
           borderWidth="1px"
-          borderColor={borderColor}
+          borderColor="gray.200"
           borderRadius="lg"
           boxShadow="sm"
           alignItems="center"

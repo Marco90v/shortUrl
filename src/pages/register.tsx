@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from "@/schema/schemas";
 import { typeRegisterSchema } from "@/type";
-import { useColorModeValue } from "@/components/ui/color-mode";
 import { createUser } from "@/services/firebase";
 import { toaster, Toaster } from "@/components/ui/toaster";
 import { InputPassword } from "@/components/inputPassword";
@@ -36,9 +35,6 @@ function Register() {
     });
 
   }
-
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const boxShadow = useColorModeValue('lg', 'dark-lg');
 
   return (
     <Container maxW="100vw" h="100vh" p={0} bg="gray.50"  centerContent>
@@ -73,10 +69,10 @@ function Register() {
         <Box
           as="form"
           onSubmit={handleSubmit(onSubmit)}
-          bg={bgColor}
+          bg="white"
           p={8}
           borderRadius="xl"
-          boxShadow={boxShadow}
+          boxShadow="lg"
           w="100%"
           transition="transform 0.3s"
           _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}

@@ -1,6 +1,5 @@
 import { Box, Flex, Text, IconButton, Button, Stack, useDisclosure, Collapsible, Link as L} from '@chakra-ui/react';
 import { Menu, X, Link, Settings, House } from 'lucide-react';
-import { useColorModeValue } from './ui/color-mode'
 import { sign_Out } from '@/services/firebase';
 import { useAuthStore } from '@/store/auth';
 import { useShallow } from 'zustand/shallow';
@@ -55,14 +54,14 @@ const Navbar = () => {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('white', 'gray.800')}
-        color={useColorModeValue('gray.600', 'white')}
+        bg='white'
+        color='gray.600'
         minH={'60px'}
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle={'solid'}
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
+        borderColor='gray.200'
         align={'center'}
         boxShadow="sm"
       >
@@ -101,7 +100,7 @@ const Navbar = () => {
             <Text
               textAlign={{ base: 'center', md: 'left' }}
               fontFamily={'heading'}
-              color={useColorModeValue('gray.800', 'white')}
+              color='gray.800'
               fontWeight="bold"
             >
               URL Shortener
@@ -131,10 +130,7 @@ const Navbar = () => {
   );
 };
 
-const DesktopNav = () => {
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const linkHoverColor = useColorModeValue('gray.800', 'white');
-  
+const DesktopNav = () => {  
   return (
     <Stack direction={'row'} gap={4}>
       {NAV_ITEMS.map((navItem) => (
@@ -143,14 +139,14 @@ const DesktopNav = () => {
             p={2}
             fontSize={'sm'}
             fontWeight={500}
-            color={linkColor}
+            color="gray.600"
           >
             <L
               alignContent={'center'}
               alignItems={'center'}
               _hover={{
                 textDecoration: 'none',
-                color: linkHoverColor,
+                color: "gray.500",
               }}
               href={navItem.href ?? '#'}
             >
@@ -168,7 +164,7 @@ const MobileNav = () => {
   
   return (
     <Stack
-      bg={useColorModeValue('white', 'gray.800')}
+      bg='white'
       p={4}
       display={{ md: 'none' }}
     >
@@ -193,7 +189,7 @@ const MobileNavItem = ({ label,icon, href }: { label: string; icon:React.JSX.Ele
       >
         <L  
           fontWeight={600}
-          color={useColorModeValue('gray.600', 'gray.200')}
+          color='gray.600'
           alignContent={'center'}
           alignItems={'center'}
           flexDirection={'row'}

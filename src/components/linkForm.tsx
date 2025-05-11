@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link as LinkIcon, ArrowRight, Check } from 'lucide-react';
 import { useShallow } from 'zustand/shallow';
 import { addLinkFirebase } from '@/services/firebase';
-import { useColorModeValue } from '@/components/ui/color-mode';
 import { toaster } from "@/components/ui/toaster"
 import { useAuthStore } from '@/store/auth';
 import { useLinksStore } from '@/store/links';
@@ -49,9 +48,6 @@ const LinkForm = () => {
   
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   const onSubmit = async (data:typeLinkSchema) => {
     if(user?.email){
@@ -99,8 +95,8 @@ const LinkForm = () => {
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
-      bg={bgColor}
-      borderColor={borderColor}
+      bg="white"
+      borderColor="gray.200"
       boxShadow="md"
       p={6}
       mb={8}

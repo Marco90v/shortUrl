@@ -3,7 +3,6 @@ import { Box, Heading, VStack, Button, Text, HStack, Fieldset, Separator } from 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toaster } from "@/components/ui/toaster";
-import { useColorModeValue } from '@/components/ui/color-mode';
 import { changePasswordSchema } from '@/schema/schemas';
 import { typeChangePasswordSchema } from '@/type';
 import { Save } from 'lucide-react';
@@ -18,9 +17,6 @@ const SettingsPage = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-    
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
   
   const onSubmit = (data:typeChangePasswordSchema) => {
     setIsLoading(true);
@@ -43,9 +39,9 @@ const SettingsPage = () => {
       <Box
         as="form"
         onSubmit={handleSubmit(onSubmit)}
-        bg={bgColor}
+        bg="white"
         borderWidth="1px"
-        borderColor={borderColor}
+        borderColor="gray.200"
         borderRadius="lg"
         boxShadow="md"
         p={6}
